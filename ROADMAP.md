@@ -21,18 +21,17 @@ This document tracks known limitations, edge cases, and potential future improve
 
 ### High Priority
 
-#### 1. Null/Undefined Children Handling
-**Current behavior:** `null`, `undefined`, `false`, `true` children create text nodes with "null", "undefined", etc.
+#### ~~1. Null/Undefined Children Handling~~ ✓ Fixed in v0.1.0
+**Status:** ✅ Resolved
 
-**Expected behavior:** These should be ignored (like React does)
+`null`, `undefined`, `false`, and `true` children are now properly ignored (like React does).
 
-**Location:** `src/index.ts:38-52` (`appendDomChild`)
+**Location:** `src/index.ts:38-58` (`appendDomChild`)
 
 ```tsx
-// Current: renders "null"
-<div>{null}</div>
-
-// Should: render empty div
+// Now works correctly
+<div>{null}</div> // renders <div></div>
+<div>{false && <span>Content</span>}</div> // renders <div></div>
 ```
 
 #### 2. Property vs Attribute Handling
@@ -165,7 +164,7 @@ These features are intentionally **not** planned:
 ## Version Planning
 
 ### v0.1.1 (Next Release)
-- Fix null/undefined children handling (#1)
+- ✅ ~~Fix null/undefined children handling (#1)~~
 - Fix property vs attribute handling (#2)
 - Fix boolean attributes (#3)
 - Add TypeScript JSX type definitions

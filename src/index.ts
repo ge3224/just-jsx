@@ -36,6 +36,11 @@
  *                 the parent.
  */
 function appendDomChild(parent: Node, child: Node | string | Node[]): void {
+  // Ignore null, undefined, and boolean values (like React does)
+  if (child == null || typeof child === "boolean") {
+    return;
+  }
+
   if (Array.isArray(child)) {
     // If child is an array, recursively append each nested child
     child.forEach((nestedChild) => appendDomChild(parent, nestedChild));

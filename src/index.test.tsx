@@ -101,6 +101,49 @@ describe("Test createDomElement", () => {
       '<svg width="100" height="100"><circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow"></circle></svg>',
     );
   });
+
+  it("ignores null children", () => {
+    document.body.appendChild(<div>{null}</div>);
+    expect(document.body.innerHTML).toBe("<div></div>");
+  });
+
+  it("ignores undefined children", () => {
+    const value = undefined;
+    document.body.appendChild(<div>{value}</div>);
+    expect(document.body.innerHTML).toBe("<div></div>");
+  });
+
+  it("ignores boolean children", () => {
+    document.body.appendChild(
+      <div>
+        {true}
+        {false}
+      </div>
+    );
+    expect(document.body.innerHTML).toBe("<div></div>");
+  });
+
+  it("handles conditional rendering with boolean operators", () => {
+    const showContent = false;
+    document.body.appendChild(
+      <div>{showContent && <span>Content</span>}</div>
+    );
+    expect(document.body.innerHTML).toBe("<div></div>");
+  });
+
+  it("handles mixed null/undefined/content children", () => {
+    document.body.appendChild(
+      <div>
+        {null}
+        <span>Hello</span>
+        {undefined}
+        {false}
+        <span>World</span>
+        {true}
+      </div>
+    );
+    expect(document.body.innerHTML).toBe("<div><span>Hello</span><span>World</span></div>");
+  });
 });
 
 describe("Test createDomFragment", () => {
