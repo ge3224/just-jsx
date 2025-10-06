@@ -18,12 +18,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": ".",
-    "paths": {
-      "@lib/jsx/jsx": ["./src/index.ts"]
-    }
+    "jsx": "react",
+    "jsxFactory": "createDomElement",
+    "jsxFragmentFactory": "createDomFragment"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.tsx"]
 }

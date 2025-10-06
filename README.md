@@ -9,8 +9,8 @@ Built for projects where vanilla TypeScript makes sense and stability beats ecos
 
 ## Features
 
-- **Zero dependencies**: No supply chain risk, no transitive dependencies
-- **Framework-agnostic**: Works with any build tool that supports JSX (SWC, Babel, TypeScript)
+- **Zero dependencies**: No supply chain risk, no transitive dependencies, **no React required**
+- **Framework-agnostic**: Works with any build tool that supports JSX (TypeScript, Vite, SWC, Babel)
 - **DOM rendering**: JSX components and fragments that compile to real DOM elements
 - **SVG support**: First-class support for inline SVG elements
 - **Type-safe**: Full TypeScript support with proper type inference
@@ -49,9 +49,44 @@ Not planned. Vendoring is the point.
 
 ### Configure Your Build Tool
 
-The JSX pragma functions need to be configured in your build tool. Here are examples for common setups:
+The JSX pragma functions need to be configured in your build tool to transform JSX syntax.
 
-#### SWC (recommended)
+#### TypeScript (Recommended)
+
+This project is configured to work with the TypeScript compiler. Add to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "createDomElement",
+    "jsxFragmentFactory": "createDomFragment"
+  }
+}
+```
+
+Then compile with:
+```bash
+tsc
+```
+
+#### Vite
+
+If using Vite, add to your `vite.config.ts`:
+
+```ts
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  esbuild: {
+    jsx: "transform",
+    jsxFactory: "createDomElement",
+    jsxFragment: "createDomFragment",
+  },
+});
+```
+
+#### SWC
 
 Add to your `.swcrc`:
 
@@ -69,20 +104,6 @@ Add to your `.swcrc`:
         "runtime": "classic"
       }
     }
-  }
-}
-```
-
-#### TypeScript
-
-Add to your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "jsx": "react",
-    "jsxFactory": "createDomElement",
-    "jsxFragmentFactory": "createDomFragment"
   }
 }
 ```
