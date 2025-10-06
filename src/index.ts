@@ -1,0 +1,204 @@
+/**
+ * JSX Rendering Pragma Functions
+ *
+ * This TypeScript module provides custom pragma functions that enable the SWC
+ * (Super-fast Web Compiler) to process JSX components and fragments, converting
+ * them into HTML that can be appended to the DOM.
+ *
+ * The module includes the following functions:
+ *
+ * 1. createDomElement: A pragma function that processes JSX components. It accepts
+ *    a tag (string or function), props (component properties), and children (DOM
+ *    nodes or strings), and returns a DOM element created based on the provided
+ *    information. If the tag is a function, it invokes the function with props
+ *    and children.
+ *
+ * 2. createDomFragment: A pragma function that processes JSX fragments (empty
+ *    tags `<></>`). It converts the fragments into a DocumentFragment, which can
+ *    hold multiple DOM nodes and is used for efficient batch appending to the DOM.
+ *
+ * 3. appendDomChild: A helper function used to append children to a parent node.
+ *    It handles arrays of children, text nodes, and regular DOM nodes by appending
+ *    them to the parent.
+ *
+ * These pragma functions allow developers to write JSX-like syntax in TypeScript
+ * and utilize the SWC compiler to efficiently transform and render components
+ * and fragments to the DOM.
+ */
+
+/**
+ * appendDomChild is a helper function that appends child nodes (DOM nodes or
+ * strings) to a parent node. This function is used by the createDomElement and
+ * createDomFragment functions.
+ *
+ * @param parent - The parent node to which children will be appended.
+ * @param child  - The child node (DOM node or string) to be appended to
+ *                 the parent.
+ */
+function appendDomChild(parent: Node, child: Node | string | Node[]): void {
+  if (Array.isArray(child)) {
+    // If child is an array, recursively append each nested child
+    child.forEach((nestedChild) => appendDomChild(parent, nestedChild));
+  } else {
+    // If child is a string, create a text node; if it's a DOM node, append
+    // it directly
+    parent.appendChild(
+      typeof child === "string"
+        ? document.createTextNode(child)
+        : child.nodeType
+          ? child
+          : document.createTextNode(String(child)),
+    );
+  }
+}
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+const svgTagNames: string[] = [
+  "a_svg",
+  "animate",
+  "animateMotion",
+  "animateTransform",
+  "audio_svg",
+  "canvas_svg",
+  "circle",
+  "clipPath",
+  "defs",
+  "desc",
+  "discard",
+  "ellipse",
+  "feBlend",
+  "feColorMatrix",
+  "feComponentTransfer",
+  "feComposite",
+  "feConvolveMatrix",
+  "feDiffuseLighting",
+  "feDisplacementMap",
+  "feDistantLight",
+  "feDropShadow",
+  "feFlood",
+  "feFuncA",
+  "feFuncB",
+  "feFuncG",
+  "feFuncR",
+  "feGaussianBlur",
+  "feImage",
+  "feMerge",
+  "feMergeNode",
+  "feMorphology",
+  "feOffset",
+  "fePointLight",
+  "feSpecularLighting",
+  "feSpotLight",
+  "feTile",
+  "feTurbulence",
+  "filter",
+  "foreignObject",
+  "g",
+  "iframe_svg",
+  "image_svg",
+  "line",
+  "linearGradient",
+  "marker",
+  "mask",
+  "metadata",
+  "mpath",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "radialGradient",
+  "rect",
+  "script_svg",
+  "set",
+  "stop",
+  "style_svg",
+  "svg",
+  "switch",
+  "symbol",
+  "text",
+  "textPath",
+  "title",
+  "tspan",
+  "unknown",
+  "use",
+  "video_svg",
+  "view",
+];
+
+function isSvgTag(tagName: string): boolean {
+  // Check if the tagName is in the list of SVG tag names
+  return svgTagNames.includes(tagName.toLowerCase());
+}
+
+function namespace(tag: string): string | null {
+  if (isSvgTag(tag)) {
+    return SVG_NS;
+  }
+  return null;
+}
+
+/**
+ * createDomElement is a custom pragma function used by SWC to process
+ * JSX components. It converts JSX components and their props
+ * into corresponding HTML elements that are then appended to the DOM.
+ *
+ * @param tag      - The HTML tag name or a functional component.
+ * @param props    - An object containing the attributes and properties to be
+ *                   applied to the HTML element.
+ * @param children - An array of child nodes (DOM nodes or strings) to be
+ *                   appended to the HTML element.
+ * @returns        - The generated HTML element or the result of invoking a
+ *                   functional component.
+ */
+export function createDomElement(
+  tag: string | ((props: any, children: any[]) => any),
+  props: Record<string, any>,
+  ...children: (Node | string)[]
+) {
+  // If the tag is a function, invoke it and return the result
+  if (typeof tag === "function") return tag(props, children);
+
+  // Determine whether the element is an SVG element
+  const ns = namespace(tag);
+
+  // Create a new DOM element with the specified tag and namespace
+  const element = (ns !== null)
+    ? document.createElementNS(ns, tag.split("_")[0])
+    : document.createElement(tag);
+
+  // Set attributes and event listeners from the props object
+  Object.entries(props || {}).forEach(([name, value]) => {
+    if (name.startsWith("on") && name.toLowerCase() in window) {
+      // If the attribute name starts with "on" and is a valid event, add an
+      // event listener
+      element.addEventListener(name.toLowerCase().slice(2), value);
+    } else {
+      // Otherwise, set the attribute with its corresponding value
+      element.setAttribute(name, value.toString());
+    }
+  });
+
+  // Append each child (node or string) to the created element
+  children.forEach((child) => {
+    appendDomChild(element, child);
+  });
+
+  return element;
+}
+
+/**
+ * createDomFragment is a custom pragma function used by SWC to process
+ * JSX fragments (`<></>`). It converts JSX fragments and their children
+ * into a DocumentFragment that can be appended to the DOM.
+ *
+ * @param _props   - Unused parameter (fragments don't have props).
+ * @param children - An array of child nodes (DOM nodes or strings) to be
+ *                   included in the DocumentFragment.
+ * @returns        - The generated DocumentFragment containing the children.
+ */
+export function createDomFragment(_props: any, ...children: (Node | string)[]) {
+  const fragment = new DocumentFragment();
+  children.forEach((child) => appendDomChild(fragment, child));
+  return fragment;
+}

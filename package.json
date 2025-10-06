@@ -1,0 +1,58 @@
+{
+  "name": "just-jsx",
+  "version": "0.1.0",
+  "description": "A vendorable vanilla TypeScript JSX parser with zero dependencies—~200 lines, framework-agnostic, built to be copied into your project",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build": "vite build",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "pnpm test && pnpm build"
+  },
+  "keywords": [
+    "jsx",
+    "typescript",
+    "vendorable",
+    "zero-dependencies",
+    "dom",
+    "pragma",
+    "vanilla"
+  ],
+  "author": {
+    "name": "Jacob Benison",
+    "url": "https://jacobbenison.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ge3224/just-jsx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ge3224/just-jsx/issues"
+  },
+  "homepage": "https://github.com/ge3224/just-jsx#readme",
+  "devDependencies": {
+    "@types/node": "^24.6.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  },
+  "files": [
+    "dist"
+  ],
+  "packageManager": "pnpm@9.0.0"
+}
