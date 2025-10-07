@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-10-06
+
+### Fixed
+- Property vs Attribute handling - DOM properties like `value`, `checked`, `selected` are now correctly set as properties instead of attributes
+- Form elements now work correctly (inputs, checkboxes, selects, textareas)
+
+### Added
+- Comprehensive DOM property support for form elements (`value`, `checked`, `selected`, `indeterminate`)
+- Media element property support (`muted`, `volume`, `currentTime`, `playbackRate`)
+- Content property support (`innerHTML`, `textContent`, `innerText`)
+- 4 new tests for property handling (20 tests total)
+- Children are now appended before props are set (fixes `<select value>` behavior)
+
+### Changed
+- Use `for` attribute on labels (following SolidJS convention) instead of React's `htmlFor`
+
 ## [0.1.1] - 2025-10-06
 
 ### Fixed
@@ -39,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/ge3224/just-jsx/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ge3224/just-jsx/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ge3224/just-jsx/releases/tag/v0.1.0

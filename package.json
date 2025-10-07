@@ -1,6 +1,6 @@
 {
   "name": "just-jsx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A vendorable vanilla TypeScript JSX parser with zero dependencies—~200 lines, framework-agnostic, built to be copied into your project",
   "type": "module",
   "main": "./dist/index.js",

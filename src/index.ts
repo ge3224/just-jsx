@@ -143,6 +143,44 @@ function namespace(tag: string): string | null {
   return null;
 }
 
+// Properties that should be set as DOM properties, not attributes
+const PROPERTY_NAMES: Record<string, string> = {
+  // Form elements - dynamic state
+  value: "value",
+  checked: "checked",
+  selected: "selected",
+  indeterminate: "indeterminate",
+  // Media elements
+  muted: "muted",
+  volume: "volume",
+  currentTime: "currentTime",
+  playbackRate: "playbackRate",
+  // Content properties
+  innerHTML: "innerHTML",
+  textContent: "textContent",
+  innerText: "innerText",
+};
+
+/**
+ * Sets a property or attribute on a DOM element based on the prop name and value
+ */
+function setProp(element: Element, name: string, value: any): void {
+  // Handle event listeners
+  if (name.startsWith("on") && typeof value === "function") {
+    element.addEventListener(name.toLowerCase().slice(2), value);
+    return;
+  }
+
+  // Use DOM property for known property names
+  if (PROPERTY_NAMES[name]) {
+    (element as any)[PROPERTY_NAMES[name]] = value;
+    return;
+  }
+
+  // Default: set as attribute
+  element.setAttribute(name, value.toString());
+}
+
 /**
  * createDomElement is a custom pragma function used by SWC to process
  * JSX components. It converts JSX components and their props
@@ -172,21 +210,15 @@ export function createDomElement(
     ? document.createElementNS(ns, tag.split("_")[0])
     : document.createElement(tag);
 
-  // Set attributes and event listeners from the props object
-  Object.entries(props || {}).forEach(([name, value]) => {
-    if (name.startsWith("on") && name.toLowerCase() in window) {
-      // If the attribute name starts with "on" and is a valid event, add an
-      // event listener
-      element.addEventListener(name.toLowerCase().slice(2), value);
-    } else {
-      // Otherwise, set the attribute with its corresponding value
-      element.setAttribute(name, value.toString());
-    }
-  });
-
-  // Append each child (node or string) to the created element
+  // Append children first (needed for select value to work)
   children.forEach((child) => {
     appendDomChild(element, child);
+  });
+
+  // Set properties, attributes, and event listeners from the props object
+  // This must happen after children for select elements to work correctly
+  Object.entries(props || {}).forEach(([name, value]) => {
+    setProp(element, name, value);
   });
 
   return element;

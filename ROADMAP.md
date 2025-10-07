@@ -34,17 +34,20 @@ This document tracks known limitations, edge cases, and potential future improve
 <div>{false && <span>Content</span>}</div> // renders <div></div>
 ```
 
-#### 2. Property vs Attribute Handling
-**Current behavior:** All non-event props use `setAttribute()`
+#### ~~2. Property vs Attribute Handling~~ ✓ Fixed in v0.1.2
+**Status:** ✅ Resolved
 
-**Problem:** Properties like `className`, `htmlFor`, `value`, `checked` need to be set as properties, not attributes
+Properties like `value`, `checked`, `selected` are now set as DOM properties, not attributes. Comprehensive support for form elements, media elements, and content properties.
 
-**Location:** `src/index.ts:171-180`
+**Location:** `src/index.ts:146-172` (`PROPERTY_NAMES`, `setProp`)
 
 ```tsx
-// Current: doesn't work correctly
+// Now works correctly
 <input value="hello" checked={true} />
-<label htmlFor="input-id" className="label" />
+<label for="input-id">Name</label>
+<select value="option2"><option value="option2">Two</option></select>
+<input type="checkbox" indeterminate={true} />
+<video muted={true} volume={0.5} currentTime={10} />
 ```
 
 #### 3. Boolean Attributes
@@ -52,7 +55,7 @@ This document tracks known limitations, edge cases, and potential future improve
 
 **Expected behavior:** `false` values should remove the attribute
 
-**Location:** `src/index.ts:178`
+**Location:** `src/index.ts:171`
 
 ```tsx
 // Current: still disabled
@@ -163,22 +166,26 @@ These features are intentionally **not** planned:
 
 ## Version Planning
 
-### v0.1.1 (Next Release)
-- ✅ ~~Fix null/undefined children handling (#1)~~
-- Fix property vs attribute handling (#2)
+### ~~v0.1.1~~ ✅ Released
+- ✅ Fix null/undefined children handling (#1)
+
+### ~~v0.1.2~~ ✅ Released
+- ✅ Fix property vs attribute handling (#2)
+- ✅ Comprehensive DOM property support (form, media, content properties)
+- ✅ Use `for` attribute on labels (SolidJS convention)
+
+### v0.1.3 (Next Release)
 - Fix boolean attributes (#3)
+- Fix style object support (#4)
+- Fix functional component props convention (#5)
+- Improve event listener detection (#6)
+- Add number children type support (#7)
+- Add key prop filtering (#8)
 - Add TypeScript JSX type definitions
 - Add LICENSE file
 - Add CONTRIBUTING.md
 
-### v0.1.2
-- Fix style object support (#4)
-- Fix functional component props convention (#5)
-- Improve event listener detection (#6)
-- Add key prop filtering (#8)
-- Add number children type support (#7)
-
-### v0.1.3
+### v0.1.4
 - Add examples directory
 - Test dist output
 - Source maps verification

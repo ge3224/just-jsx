@@ -144,6 +144,41 @@ describe("Test createDomElement", () => {
     );
     expect(document.body.innerHTML).toBe("<div><span>Hello</span><span>World</span></div>");
   });
+
+  it("handles input value as property", () => {
+    const input = <input value="initial" /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    expect(input.value).toBe("initial");
+  });
+
+  it("handles checkbox checked as property", () => {
+    const checkedBox = <input type="checkbox" checked={true} /> as HTMLInputElement;
+    document.body.appendChild(checkedBox);
+
+    expect(checkedBox.checked).toBe(true);
+  });
+
+  it("handles for attribute on labels", () => {
+    const label = <label for="input-id">Name</label> as HTMLLabelElement;
+    document.body.appendChild(label);
+
+    expect(label.getAttribute("for")).toBe("input-id");
+    expect(label.htmlFor).toBe("input-id"); // DOM automatically maps for -> htmlFor
+  });
+
+  it("handles select value as property", () => {
+    const select = (
+      <select value="option2">
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </select>
+    ) as HTMLSelectElement;
+
+    document.body.appendChild(select);
+    expect(select.value).toBe("option2");
+  });
 });
 
 describe("Test createDomFragment", () => {
