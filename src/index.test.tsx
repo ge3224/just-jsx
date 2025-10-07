@@ -179,6 +179,48 @@ describe("Test createDomElement", () => {
     document.body.appendChild(select);
     expect(select.value).toBe("option2");
   });
+
+  it("handles boolean attribute disabled=false", () => {
+    const button = <button disabled={false}>Click me</button> as HTMLButtonElement;
+    document.body.appendChild(button);
+
+    expect(button.hasAttribute("disabled")).toBe(false);
+    expect(button.disabled).toBe(false);
+  });
+
+  it("handles boolean attribute disabled=true", () => {
+    const button = <button disabled={true}>Click me</button> as HTMLButtonElement;
+    document.body.appendChild(button);
+
+    expect(button.hasAttribute("disabled")).toBe(true);
+    expect(button.disabled).toBe(true);
+  });
+
+  it("handles boolean attribute required=false", () => {
+    const input = <input required={false} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    expect(input.hasAttribute("required")).toBe(false);
+    expect(input.required).toBe(false);
+  });
+
+  it("handles boolean attribute readonly=true", () => {
+    const input = <input readonly={true} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    expect(input.hasAttribute("readonly")).toBe(true);
+    expect(input.readOnly).toBe(true);
+  });
+
+  it("handles multiple boolean attributes", () => {
+    const input = <input required={true} readonly={false} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    expect(input.hasAttribute("required")).toBe(true);
+    expect(input.required).toBe(true);
+    expect(input.hasAttribute("readonly")).toBe(false);
+    expect(input.readOnly).toBe(false);
+  });
 });
 
 describe("Test createDomFragment", () => {

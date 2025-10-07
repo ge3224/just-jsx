@@ -161,6 +161,28 @@ const PROPERTY_NAMES: Record<string, string> = {
   innerText: "innerText",
 };
 
+// Boolean attributes that should be removed when false
+const BOOLEAN_ATTRIBUTES = new Set([
+  "disabled",
+  "readonly",
+  "required",
+  "autofocus",
+  "autoplay",
+  "controls",
+  "loop",
+  "multiple",
+  "open",
+  "hidden",
+  "reversed",
+  "allowfullscreen",
+  "default",
+  "ismap",
+  "novalidate",
+  "formnovalidate",
+  "defer",
+  "async",
+]);
+
 /**
  * Sets a property or attribute on a DOM element based on the prop name and value
  */
@@ -168,6 +190,16 @@ function setProp(element: Element, name: string, value: any): void {
   // Handle event listeners
   if (name.startsWith("on") && typeof value === "function") {
     element.addEventListener(name.toLowerCase().slice(2), value);
+    return;
+  }
+
+  // Handle boolean attributes - remove when false, add when true
+  if (BOOLEAN_ATTRIBUTES.has(name)) {
+    if (value === false || value == null) {
+      element.removeAttribute(name);
+    } else {
+      element.setAttribute(name, "");
+    }
     return;
   }
 
