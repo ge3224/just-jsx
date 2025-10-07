@@ -184,12 +184,38 @@ const BOOLEAN_ATTRIBUTES = new Set([
 ]);
 
 /**
+ * Converts a style object to a CSS string
+ * Example: {color: 'red', 'font-size': '14px'} -> "color: red; font-size: 14px"
+ * Note: Keys should be kebab-case strings (following SolidJS convention)
+ */
+function styleObjectToString(style: Record<string, string | number>): string {
+  return Object.entries(style)
+    .map(([key, value]) => {
+      // Warn if camelCase is detected (React habit)
+      if (/[A-Z]/.test(key)) {
+        console.warn(
+          `Style property "${key}" uses camelCase. Use kebab-case instead (e.g., "${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}")`
+        );
+      }
+      const cssValue = typeof value === "number" ? `${value}px` : value;
+      return `${key}: ${cssValue}`;
+    })
+    .join("; ");
+}
+
+/**
  * Sets a property or attribute on a DOM element based on the prop name and value
  */
 function setProp(element: Element, name: string, value: any): void {
   // Handle event listeners
   if (name.startsWith("on") && typeof value === "function") {
     element.addEventListener(name.toLowerCase().slice(2), value);
+    return;
+  }
+
+  // Handle style objects
+  if (name === "style" && typeof value === "object" && value !== null) {
+    element.setAttribute("style", styleObjectToString(value));
     return;
   }
 

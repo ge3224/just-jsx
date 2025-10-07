@@ -221,6 +221,45 @@ describe("Test createDomElement", () => {
     expect(input.hasAttribute("readonly")).toBe(false);
     expect(input.readOnly).toBe(false);
   });
+
+  it("handles style object with kebab-case properties", () => {
+    const div = <div style={{color: 'red', 'font-size': '14px'}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("style")).toBe("color: red; font-size: 14px");
+  });
+
+  it("handles style object with number values", () => {
+    const div = <div style={{width: 100, height: 200}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("style")).toBe("width: 100px; height: 200px");
+  });
+
+  it("handles style object with mixed values", () => {
+    const div = <div style={{color: 'blue', 'margin-top': 10, padding: '5px'}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("style")).toBe("color: blue; margin-top: 10px; padding: 5px");
+  });
+
+  it("handles style string (not object)", () => {
+    const div = <div style="color: green" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("style")).toBe("color: green");
+  });
+
+  it("warns when camelCase is used in style object", () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const div = <div style={{fontSize: '14px'}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      'Style property "fontSize" uses camelCase. Use kebab-case instead (e.g., "font-size")'
+    );
+    warnSpy.mockRestore();
+  });
 });
 
 describe("Test createDomFragment", () => {
