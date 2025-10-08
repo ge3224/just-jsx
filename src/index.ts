@@ -253,12 +253,14 @@ function setProp(element: Element, name: string, value: any): void {
  *                   functional component.
  */
 export function createDomElement(
-  tag: string | ((props: any, children: any[]) => any),
+  tag: string | ((props: any) => any),
   props: Record<string, any>,
   ...children: (Node | string)[]
 ) {
-  // If the tag is a function, invoke it and return the result
-  if (typeof tag === "function") return tag(props, children);
+  // If the tag is a function, invoke it with props (including children)
+  if (typeof tag === "function") {
+    return tag({ ...(props || {}), children });
+  }
 
   // Determine whether the element is an SVG element
   const ns = namespace(tag);
@@ -288,12 +290,14 @@ export function createDomElement(
  * into a DocumentFragment that can be appended to the DOM.
  *
  * @param _props   - Unused parameter (fragments don't have props).
- * @param children - An array of child nodes (DOM nodes or strings) to be
- *                   included in the DocumentFragment.
+ * @param children - Child nodes (DOM nodes or strings) to be included in the DocumentFragment.
  * @returns        - The generated DocumentFragment containing the children.
  */
-export function createDomFragment(_props: any, ...children: (Node | string)[]) {
+export function createDomFragment(props: any, ...children: (Node | string)[]) {
   const fragment = new DocumentFragment();
-  children.forEach((child) => appendDomChild(fragment, child));
+  // Children might be in props.children (when called from a component) or as spread arguments
+  const actualChildren = props?.children || children;
+  const childArray = Array.isArray(actualChildren) ? actualChildren : [actualChildren];
+  childArray.forEach((child) => appendDomChild(fragment, child));
   return fragment;
 }

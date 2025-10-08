@@ -260,6 +260,42 @@ describe("Test createDomElement", () => {
     );
     warnSpy.mockRestore();
   });
+
+  it("passes children in props.children", () => {
+    const Container = ({ children }) => {
+      return <div class="container">{children}</div>;
+    };
+    document.body.appendChild(
+      <Container>
+        <p>Child 1</p>
+        <p>Child 2</p>
+      </Container>
+    );
+
+    expect(document.body.innerHTML).toBe(
+      '<div class="container"><p>Child 1</p><p>Child 2</p></div>'
+    );
+  });
+
+  it("allows destructuring children from props", () => {
+    const Wrapper = ({ children, title }) => {
+      return (
+        <div>
+          <h1>{title}</h1>
+          {children}
+        </div>
+      );
+    };
+    document.body.appendChild(
+      <Wrapper title="My Title">
+        <p>Content</p>
+      </Wrapper>
+    );
+
+    expect(document.body.innerHTML).toBe(
+      '<div><h1>My Title</h1><p>Content</p></div>'
+    );
+  });
 });
 
 describe("Test createDomFragment", () => {
