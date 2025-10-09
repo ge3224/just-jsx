@@ -27,15 +27,15 @@
  */
 
 /**
- * appendDomChild is a helper function that appends child nodes (DOM nodes or
- * strings) to a parent node. This function is used by the createDomElement and
- * createDomFragment functions.
+ * appendDomChild is a helper function that appends child nodes (DOM nodes,
+ * strings, or numbers) to a parent node. This function is used by the
+ * createDomElement and createDomFragment functions.
  *
  * @param parent - The parent node to which children will be appended.
- * @param child  - The child node (DOM node or string) to be appended to
- *                 the parent.
+ * @param child  - The child node (DOM node, string, or number) to be appended
+ *                 to the parent.
  */
-function appendDomChild(parent: Node, child: Node | string | Node[]): void {
+function appendDomChild(parent: Node, child: Node | string | number | (Node | string | number)[]): void {
   // Ignore null, undefined, and boolean values (like React does)
   if (child == null || typeof child === "boolean") {
     return;
@@ -247,15 +247,15 @@ function setProp(element: Element, name: string, value: any): void {
  * @param tag      - The HTML tag name or a functional component.
  * @param props    - An object containing the attributes and properties to be
  *                   applied to the HTML element.
- * @param children - An array of child nodes (DOM nodes or strings) to be
- *                   appended to the HTML element.
+ * @param children - An array of child nodes (DOM nodes, strings, or numbers)
+ *                   to be appended to the HTML element.
  * @returns        - The generated HTML element or the result of invoking a
  *                   functional component.
  */
 export function createDomElement(
   tag: string | ((props: any) => any),
   props: Record<string, any>,
-  ...children: (Node | string)[]
+  ...children: (Node | string | number)[]
 ) {
   // If the tag is a function, invoke it with props (including children)
   if (typeof tag === "function") {
@@ -289,11 +289,12 @@ export function createDomElement(
  * JSX fragments (`<></>`). It converts JSX fragments and their children
  * into a DocumentFragment that can be appended to the DOM.
  *
- * @param _props   - Unused parameter (fragments don't have props).
- * @param children - Child nodes (DOM nodes or strings) to be included in the DocumentFragment.
+ * @param props    - Props object that may contain children.
+ * @param children - Child nodes (DOM nodes, strings, or numbers) to be included
+ *                   in the DocumentFragment.
  * @returns        - The generated DocumentFragment containing the children.
  */
-export function createDomFragment(props: any, ...children: (Node | string)[]) {
+export function createDomFragment(props: any, ...children: (Node | string | number)[]) {
   const fragment = new DocumentFragment();
   // Children might be in props.children (when called from a component) or as spread arguments
   const actualChildren = props?.children || children;

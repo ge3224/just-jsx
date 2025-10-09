@@ -296,6 +296,26 @@ describe("Test createDomElement", () => {
       '<div><h1>My Title</h1><p>Content</p></div>'
     );
   });
+
+  it("handles number children", () => {
+    document.body.appendChild(<div>{0}</div>);
+    expect(document.body.innerHTML).toBe("<div>0</div>");
+  });
+
+  it("handles number children with other content", () => {
+    document.body.appendChild(<div>Count: {42}</div>);
+    expect(document.body.innerHTML).toBe("<div>Count: 42</div>");
+  });
+
+  it("handles decimal number children", () => {
+    document.body.appendChild(<span>{123.45}</span>);
+    expect(document.body.innerHTML).toBe("<span>123.45</span>");
+  });
+
+  it("handles negative number children", () => {
+    document.body.appendChild(<p>{-10}</p>);
+    expect(document.body.innerHTML).toBe("<p>-10</p>");
+  });
 });
 
 describe("Test createDomFragment", () => {
