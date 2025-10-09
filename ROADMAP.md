@@ -174,22 +174,21 @@ These features are intentionally **not** planned:
 - ✅ Comprehensive DOM property support (form, media, content properties)
 - ✅ Use `for` attribute on labels (SolidJS convention)
 
-### v0.1.3 (Next Release)
-- Fix boolean attributes (#3)
-- Fix style object support (#4)
-- Fix functional component props convention (#5)
-- Improve event listener detection (#6)
-- Add number children type support (#7)
-- Add key prop filtering (#8)
+### ~~v0.1.3~~ ✅ Released
+- ✅ Fix boolean attributes (#3)
+- ✅ Fix style object support (#4)
+- ✅ Fix functional component props convention (#5)
+- ✅ Event listener detection (#6) - already implemented correctly
+- ✅ Add number children type support (#7)
+- ✅ Add key prop filtering (#8)
+
+### v0.1.4 (Next Release)
 - Add TypeScript JSX type definitions
 - Add LICENSE file
 - Add CONTRIBUTING.md
-
-### v0.1.4
 - Add examples directory
 - Test dist output
 - Source maps verification
-- CI/CD pipeline
 - Comprehensive test coverage for all edge cases
 
 ### Future (v0.2.0+)

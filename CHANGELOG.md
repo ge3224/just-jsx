@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2025-10-09
+
+### Fixed
+- Boolean attributes (`disabled`, `readonly`, `required`, etc.) now correctly removed when set to `false`
+- Style object support with kebab-case properties (following SolidJS convention)
+- Functional components now use `props.children` convention (React/SolidJS style)
+
+### Added
+- Boolean attribute handling for 18 common attributes
+- Style object to CSS string conversion with number-to-px support
+- Console warning for camelCase style properties (helps React developers)
+- Number children type support (`<div>{0}</div>`, `<span>{123.45}</span>`)
+- Reserved props filtering (`key` and `ref` are now filtered out)
+- 18 new tests (38 tests total)
+
+### Changed
+- Functional components signature: from `(props, children)` to `(props)` where children is in `props.children`
+- `createDomFragment` now handles children from both `props.children` and spread arguments
+
 ## [0.1.2] - 2025-10-06
 
 ### Fixed
@@ -55,7 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/ge3224/just-jsx/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/ge3224/just-jsx/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ge3224/just-jsx/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ge3224/just-jsx/releases/tag/v0.1.0
