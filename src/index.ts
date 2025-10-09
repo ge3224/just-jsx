@@ -44,16 +44,12 @@ function appendDomChild(parent: Node, child: Node | string | number | (Node | st
   if (Array.isArray(child)) {
     // If child is an array, recursively append each nested child
     child.forEach((nestedChild) => appendDomChild(parent, nestedChild));
+  } else if (typeof child === "string" || typeof child === "number") {
+    // If child is a string or number, create a text node
+    parent.appendChild(document.createTextNode(String(child)));
   } else {
-    // If child is a string, create a text node; if it's a DOM node, append
-    // it directly
-    parent.appendChild(
-      typeof child === "string"
-        ? document.createTextNode(child)
-        : child.nodeType
-          ? child
-          : document.createTextNode(String(child)),
-    );
+    // Child is a DOM node, append it directly
+    parent.appendChild(child);
   }
 }
 

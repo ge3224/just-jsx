@@ -182,7 +182,10 @@ These features are intentionally **not** planned:
 - ✅ Add number children type support (#7)
 - ✅ Add key prop filtering (#8)
 
-### v0.1.4 (Next Release)
+### ~~v0.1.4~~ ✅ Released
+- ✅ Fix TypeScript compilation error with number children in appendDomChild
+
+### v0.1.5 (Next Release)
 - Add TypeScript JSX type definitions
 - Add LICENSE file
 - Add CONTRIBUTING.md
