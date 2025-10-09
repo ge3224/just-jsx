@@ -316,6 +316,16 @@ describe("Test createDomElement", () => {
     document.body.appendChild(<p>{-10}</p>);
     expect(document.body.innerHTML).toBe("<p>-10</p>");
   });
+
+  it("filters out key prop", () => {
+    document.body.appendChild(<div key="item-1">Hello</div>);
+    expect(document.body.innerHTML).toBe("<div>Hello</div>");
+  });
+
+  it("filters out ref prop", () => {
+    document.body.appendChild(<div ref="myRef">World</div>);
+    expect(document.body.innerHTML).toBe("<div>World</div>");
+  });
 });
 
 describe("Test createDomFragment", () => {

@@ -207,6 +207,11 @@ function styleObjectToString(style: Record<string, string | number>): string {
  * Sets a property or attribute on a DOM element based on the prop name and value
  */
 function setProp(element: Element, name: string, value: any): void {
+  // Filter out reserved props (key, ref)
+  if (name === "key" || name === "ref") {
+    return;
+  }
+
   // Handle event listeners
   if (name.startsWith("on") && typeof value === "function") {
     element.addEventListener(name.toLowerCase().slice(2), value);

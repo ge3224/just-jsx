@@ -195,8 +195,12 @@ These features are intentionally **not** planned:
 ### Future (v0.2.0+)
 - Nested SVG namespace handling (#9)
 - Memory management patterns/utilities (#11)
-- Advanced prop handling (ref, dangerouslySetInnerHTML) - if needed
+- Advanced prop handling (dangerouslySetInnerHTML) - if needed
 - XSS protection considerations - if needed
+- Control flow components (For, Show, Switch/Match) - similar to SolidJS
+  - Minimal, bare-metal implementations for common patterns
+  - No virtual DOM reconciliation, just helpers for list rendering and conditionals
+  - Keep it optional and lightweight
 
 ## Contributing
 
