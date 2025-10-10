@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `FunctionalComponent<P>` type export for component authors
   - Type-safe props for all intrinsic elements
   - Proper children type inference
+- MIT LICENSE file
 
 ### Changed
 - Optimized code size from 374 to 129 lines (65% reduction)

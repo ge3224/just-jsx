@@ -9,7 +9,7 @@ This document tracks known limitations, edge cases, and potential future improve
 - [x] **Type exports** - Export prop types and component types for TypeScript users (v0.1.6)
 - [x] **CHANGELOG.md** - Version tracking and breaking changes documentation
 - [ ] **CONTRIBUTING.md** - Guidelines for contributing to the project
-- [ ] **LICENSE file** - MIT license file
+- [x] **LICENSE file** - MIT license file (v0.1.6)
 - [x] **Examples directory** - Usage examples and recipes for common patterns
 - [x] **CI/CD pipeline** - GitHub Actions for automated testing and builds
 
@@ -212,7 +212,7 @@ These features are intentionally **not** planned:
 - [x] Memory management patterns documentation (#11)
 - [x] Add examples directory with recipes
 - [x] Add TypeScript JSX type definitions (inline in source)
-- [ ] Add LICENSE file
+- [x] Add LICENSE file
 - [ ] Add CONTRIBUTING.md
 - [ ] Test dist output
 - [ ] Source maps verification
