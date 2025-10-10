@@ -253,6 +253,17 @@ const SafeLink = ({ href, children }) => {
 
 The browser's built-in protections combined with proper CSP headers and input validation provide robust defense without library dependencies.
 
+## Examples and Recipes
+
+See the [examples directory](./examples) for:
+- Basic usage patterns (counter, todo list, SVG)
+- **Recipes** for advanced patterns:
+  - [Memory management](./examples/recipes/memory-management.tsx) - Event listener cleanup patterns
+  - Component patterns
+  - Form handling
+  - Async rendering
+  - Animations
+
 ## Development
 
 ```bash

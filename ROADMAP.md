@@ -10,7 +10,7 @@ This document tracks known limitations, edge cases, and potential future improve
 - [x] **CHANGELOG.md** - Version tracking and breaking changes documentation
 - [ ] **CONTRIBUTING.md** - Guidelines for contributing to the project
 - [ ] **LICENSE file** - MIT license file
-- [ ] **Examples directory** - Usage examples and common patterns (like simple-state)
+- [x] **Examples directory** - Usage examples and recipes for common patterns
 - [x] **CI/CD pipeline** - GitHub Actions for automated testing and builds
 
 ### Build & Distribution
@@ -150,12 +150,17 @@ Complex SVG/HTML nesting scenarios now work correctly, including:
 
 **Location:** `README.md` (Security Considerations section)
 
-#### 11. Memory Management
-**Current behavior:** Event listeners are never cleaned up
+#### ~~11. Memory Management~~ ✓ Documented in v0.1.6
+**Status:** ✅ Documented (not implemented in library)
 
-**Limitation:** No component lifecycle/unmounting concept
+**Decision:** Lifecycle/cleanup is out of scope for this low-level library. Memory management patterns are documented in examples with multiple approaches:
+- Manual cleanup with stored references
+- AbortController (modern, recommended)
+- CleanupManager class pattern
+- Component lifecycle wrapper
+- React-style hook pattern
 
-**Consideration:** Document cleanup patterns or add utility functions
+**Location:** `examples/recipes/memory-management.tsx`
 
 #### 12. Advanced Props
 **Not supported:**
@@ -204,18 +209,17 @@ These features are intentionally **not** planned:
 ### v0.1.6 (Next Release)
 - [x] Code optimization (374 → 129 lines, 65% reduction)
 - [x] XSS protection documentation (#10)
+- [x] Memory management patterns documentation (#11)
+- [x] Add examples directory with recipes
 - [ ] Add TypeScript JSX type definitions
 - [ ] Add LICENSE file
 - [ ] Add CONTRIBUTING.md
-- [ ] Add examples directory
 - [ ] Test dist output
 - [ ] Source maps verification
 - [ ] Comprehensive test coverage for all edge cases
 
 ### Future (v0.2.0+)
-- Memory management patterns/utilities (#11)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed
-- XSS protection considerations - if needed
 - Control flow components (For, Show, Switch/Match) - similar to SolidJS
   - Minimal, bare-metal implementations for common patterns
   - No virtual DOM reconciliation, just helpers for list rendering and conditionals

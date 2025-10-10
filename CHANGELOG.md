@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Security Considerations section in README with safe coding patterns and CSP guidance
+- Examples directory with recipes for advanced patterns
+- Memory management recipe with 5 cleanup patterns (manual, AbortController, manager, lifecycle, hooks)
 
 ### Changed
 - Optimized code size from 374 to 129 lines (65% reduction)
