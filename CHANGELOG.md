@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2025-10-10
+
+### Added
+- Security Considerations section in README with safe coding patterns and CSP guidance
+
+### Changed
+- Optimized code size from 374 to 129 lines (65% reduction)
+  - SVG tags converted to Set with comma-separated string (faster lookups)
+  - Condensed property and boolean attribute declarations
+  - Simplified conditionals and reduced verbose comments
+  - Inlined simple functions
+- Updated README claims from ~200 to ~130 lines
+
 ## [0.1.5] - 2025-10-10
 
 ### Fixed
@@ -94,7 +107,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/ge3224/just-jsx/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/ge3224/just-jsx/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/ge3224/just-jsx/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/ge3224/just-jsx/compare/v0.1.2...v0.1.3

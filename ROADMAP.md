@@ -139,12 +139,16 @@ Complex SVG/HTML nesting scenarios now work correctly, including:
 
 **Location:** `src/index.ts` (`fixNamespaceIfNeeded`, `appendDomChild`)
 
-#### 10. XSS Protection
-**Current behavior:** No sanitization of attribute values
+#### ~~10. XSS Protection~~ ✓ Documented in v0.1.6
+**Status:** ✅ Documented (not implemented in library)
 
-**Consideration:** Whether to add sanitization or document as user responsibility
+**Decision:** Sanitization is out of scope for this low-level library. Security is documented as user responsibility with guidance on:
+- Browser security features (CSP, server-side validation)
+- Safe coding patterns vs unsafe patterns
+- Defense-in-depth strategies
+- URL validation examples
 
-**Note:** This is a low-level library - sanitization might be out of scope
+**Location:** `README.md` (Security Considerations section)
 
 #### 11. Memory Management
 **Current behavior:** Event listeners are never cleaned up
@@ -194,8 +198,12 @@ These features are intentionally **not** planned:
 ### ~~v0.1.4~~ ✅ Released
 - ✅ Fix TypeScript compilation error with number children in appendDomChild
 
-### v0.1.5 (Next Release)
-- [x] Nested SVG namespace handling (#9)
+### ~~v0.1.5~~ ✅ Released
+- ✅ Nested SVG namespace handling (#9)
+
+### v0.1.6 (Next Release)
+- [x] Code optimization (374 → 129 lines, 65% reduction)
+- [x] XSS protection documentation (#10)
 - [ ] Add TypeScript JSX type definitions
 - [ ] Add LICENSE file
 - [ ] Add CONTRIBUTING.md

@@ -211,6 +211,48 @@ The library handles:
 - Appending children (text nodes, elements, arrays)
 - Invoking functional components
 
+## Security Considerations
+
+This library does not sanitize input. When rendering user-provided content, rely on browser security features and safe coding patterns:
+
+### Browser Security Features
+
+- **[Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)** - Configure HTTP headers to restrict inline scripts and unsafe evaluations
+- **Server-side validation** - Validate and sanitize user input before it reaches the client
+- **HTTPS only** - Ensure all content is served over secure connections
+
+### Safe Coding Patterns
+
+```tsx
+// ✅ Safe - text content is automatically escaped by the browser
+<div>{userInput}</div>
+
+// ✅ Safe - validate URLs before rendering
+const SafeLink = ({ href, children }) => {
+  const isValidUrl = href.startsWith('https://') || href.startsWith('/');
+  return isValidUrl ? <a href={href}>{children}</a> : <span>{children}</span>;
+};
+
+// ✅ Safe - use textContent for plain text
+<div textContent={userInput} />
+
+// ❌ Unsafe - raw HTML from untrusted sources
+<div innerHTML={userProvidedHtml} />
+
+// ❌ Unsafe - unvalidated URLs
+<a href={userInput}>Link</a>
+```
+
+### Defense-in-Depth Strategy
+
+1. **Validate input** on the server before sending to client
+2. **Set CSP headers** to restrict inline scripts and eval()
+3. **Escape by default** - JSX text children are automatically safe
+4. **Validate URLs** for href, src, and action attributes
+5. **Avoid innerHTML** with untrusted content
+
+The browser's built-in protections combined with proper CSP headers and input validation provide robust defense without library dependencies.
+
 ## Development
 
 ```bash
