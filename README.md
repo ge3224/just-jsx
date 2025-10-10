@@ -3,7 +3,7 @@
 [![No Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://github.com/ge3224/just-jsx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A vendorable vanilla TypeScript JSX parser with zero dependencies. Just ~200 lines of type-safe DOM rendering, built to be copied into your project—framework-agnostic and audit-friendly.
+A vendorable vanilla TypeScript JSX parser with zero dependencies. Just ~130 lines of type-safe DOM rendering, built to be copied into your project—framework-agnostic and audit-friendly.
 
 Built for projects where vanilla TypeScript makes sense and stability beats ecosystem churn.
 
@@ -14,7 +14,7 @@ Built for projects where vanilla TypeScript makes sense and stability beats ecos
 - **DOM rendering**: JSX components and fragments that compile to real DOM elements
 - **SVG support**: First-class support for inline SVG elements
 - **Type-safe**: Full TypeScript support with proper type inference
-- **Audit-friendly**: Small enough to actually read and understand (~200 lines)
+- **Audit-friendly**: Small enough to actually read and understand (~130 lines)
 
 ## Installation
 
