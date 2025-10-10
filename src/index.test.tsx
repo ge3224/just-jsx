@@ -326,6 +326,62 @@ describe("Test createDomElement", () => {
     document.body.appendChild(<div ref="myRef">World</div>);
     expect(document.body.innerHTML).toBe("<div>World</div>");
   });
+
+  it("handles SVG namespace correctly", () => {
+    const svg = <svg width="100" height="100">
+      <circle cx="50" cy="50" r="40" />
+    </svg> as SVGElement;
+    document.body.appendChild(svg);
+
+    expect(svg.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    const circle = svg.querySelector("circle") as SVGElement;
+    expect(circle.namespaceURI).toBe("http://www.w3.org/2000/svg");
+  });
+
+  it("handles foreignObject with HTML inside SVG", () => {
+    const svg = (
+      <svg width="200" height="200">
+        <foreignObject x="10" y="10" width="100" height="100">
+          <div>HTML content</div>
+        </foreignObject>
+      </svg>
+    ) as SVGElement;
+    document.body.appendChild(svg);
+
+    const foreignObject = svg.querySelector("foreignObject") as SVGElement;
+    const div = foreignObject.querySelector("div") as HTMLElement;
+
+    expect(svg.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(foreignObject.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(div.namespaceURI).toBe("http://www.w3.org/1999/xhtml");
+  });
+
+  it("handles nested SVG inside HTML inside SVG", () => {
+    const svg = (
+      <svg width="200" height="200">
+        <foreignObject x="10" y="10" width="100" height="100">
+          <div>
+            <svg width="50" height="50">
+              <circle cx="25" cy="25" r="20" />
+            </svg>
+          </div>
+        </foreignObject>
+      </svg>
+    ) as SVGElement;
+    document.body.appendChild(svg);
+
+    const outerSvg = svg;
+    const foreignObject = svg.querySelector("foreignObject") as SVGElement;
+    const div = foreignObject.querySelector("div") as HTMLElement;
+    const innerSvg = div.querySelector("svg") as SVGElement;
+    const circle = innerSvg.querySelector("circle") as SVGElement;
+
+    expect(outerSvg.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(foreignObject.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(div.namespaceURI).toBe("http://www.w3.org/1999/xhtml");
+    expect(innerSvg.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(circle.namespaceURI).toBe("http://www.w3.org/2000/svg");
+  });
 });
 
 describe("Test createDomFragment", () => {

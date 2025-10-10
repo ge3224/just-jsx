@@ -7,11 +7,11 @@ This document tracks known limitations, edge cases, and potential future improve
 ### Documentation & Project Files
 - [ ] **TypeScript JSX type definitions** - Add `JSX.IntrinsicElements` and `JSX.Element` type declarations
 - [ ] **Type exports** - Export prop types and component types for TypeScript users
-- [ ] **CHANGELOG.md** - Version tracking and breaking changes documentation
+- [x] **CHANGELOG.md** - Version tracking and breaking changes documentation
 - [ ] **CONTRIBUTING.md** - Guidelines for contributing to the project
 - [ ] **LICENSE file** - MIT license file
 - [ ] **Examples directory** - Usage examples and common patterns (like simple-state)
-- [ ] **CI/CD pipeline** - GitHub Actions for automated testing and builds
+- [x] **CI/CD pipeline** - GitHub Actions for automated testing and builds
 
 ### Build & Distribution
 - [ ] **Test dist output** - Verify built artifacts work correctly
@@ -50,85 +50,94 @@ Properties like `value`, `checked`, `selected` are now set as DOM properties, no
 <video muted={true} volume={0.5} currentTime={10} />
 ```
 
-#### 3. Boolean Attributes
-**Current behavior:** Boolean attributes like `disabled="false"` still disable elements
+#### ~~3. Boolean Attributes~~ ✓ Fixed in v0.1.3
+**Status:** ✅ Resolved
 
-**Expected behavior:** `false` values should remove the attribute
+Boolean attributes like `disabled`, `hidden`, `readonly` now correctly handle `false` values by removing the attribute.
 
-**Location:** `src/index.ts:171`
+**Location:** `src/index.ts` (`setProp`)
 
 ```tsx
-// Current: still disabled
-<button disabled={false}>Click me</button>
+// Now works correctly
+<button disabled={false}>Click me</button> // renders <button>Click me</button>
+<input readonly={false} /> // renders <input>
 ```
 
-#### 4. Style Object Support
-**Current behavior:** Style objects call `.toString()` and fail
+#### ~~4. Style Object Support~~ ✓ Fixed in v0.1.3
+**Status:** ✅ Resolved
 
-**Expected behavior:** Convert style objects to CSS strings
+Style objects are now properly converted to CSS strings with automatic camelCase to kebab-case conversion.
+
+**Location:** `src/index.ts` (`setProp`)
 
 ```tsx
-// Current: doesn't work
+// Now works correctly
 <div style={{color: 'red', fontSize: '14px'}} />
-
-// Should work: <div style="color: red; font-size: 14px">
+// renders: <div style="color: red; font-size: 14px">
 ```
 
-### Medium Priority
+### Medium Priority (All Resolved ✅)
 
-#### 5. Functional Component Props Convention
-**Current behavior:** Children passed as second argument `tag(props, children)`
+#### ~~5. Functional Component Props Convention~~ ✓ Fixed in v0.1.3
+**Status:** ✅ Resolved
 
-**Problem:** Inconsistent with React/JSX conventions where children are in `props.children`
+Children are now passed as `props.children` following React/JSX conventions.
 
-**Location:** `src/index.ts:160`
+**Location:** `src/index.ts` (`h`)
 
 ```tsx
-// Current signature
-const Component = (props, children) => { ... }
-
-// React convention
+// Now uses standard convention
 const Component = ({ children, ...props }) => { ... }
+// Or
+const Component = (props) => { return <div>{props.children}</div> }
 ```
 
-#### 6. Event Listener Detection
-**Current behavior:** `name.toLowerCase() in window` check is fragile
+#### ~~6. Event Listener Detection~~ ✓ Already Correct
+**Status:** ✅ No changes needed
 
-**Problem:** Won't work for custom events or newer event types
+Event listener detection already uses function checking, not `name in window`. The implementation correctly identifies event handlers by checking if the prop name starts with "on" and the value is a function.
 
-**Better approach:** Check if value is a function
+**Location:** `src/index.ts` (`setProp`)
 
-**Location:** `src/index.ts:172`
+#### ~~7. Number Children Type Support~~ ✓ Fixed in v0.1.3
+**Status:** ✅ Resolved
 
-#### 7. Number Children Type Support
-**Current behavior:** Numbers work at runtime but aren't in type signature
+Numbers are now properly supported in type signatures and handled correctly in rendering.
 
-**Fix:** Update type signature to allow `number` in children
+**Location:** `src/index.ts` (type definitions and `appendDomChild`)
 
 ```tsx
-// Currently typed incorrectly but works
+// Now fully supported
 <div>{0}</div>
 <span>{123.45}</span>
 ```
 
-#### 8. Key Prop Handling
-**Current behavior:** `key` prop becomes an attribute
+#### ~~8. Key and Ref Prop Handling~~ ✓ Fixed in v0.1.3
+**Status:** ✅ Resolved
 
-**Expected behavior:** Should be ignored/filtered out (used by frameworks for reconciliation)
+Both `key` and `ref` props are now properly filtered out and don't become attributes.
+
+**Location:** `src/index.ts` (`setProp`)
 
 ```tsx
-// Current: <div key="item-1">
-<div key="item-1">Hello</div>
-
-// Should: <div>
+// Now works correctly
+<div key="item-1">Hello</div> // renders <div>Hello</div>
+<div ref={myRef}>Content</div> // renders <div>Content</div>
 ```
 
 ### Low Priority
 
-#### 9. Nested SVG Namespace Handling
-**Current behavior:** May not correctly handle SVG nested inside HTML inside SVG
+#### ~~9. Nested SVG Namespace Handling~~ ✓ Fixed in v0.1.5
+**Status:** ✅ Resolved
 
-**Investigation needed:** Test complex SVG/HTML nesting scenarios
+Complex SVG/HTML nesting scenarios now work correctly, including:
+- `foreignObject` elements properly created in SVG namespace
+- HTML elements inside `foreignObject` use HTML namespace
+- SVG elements inside HTML (inside foreignObject) correctly use SVG namespace again
+
+**Implementation:** Runtime namespace correction in `appendDomChild` function automatically fixes namespace mismatches based on parent context.
+
+**Location:** `src/index.ts` (`fixNamespaceIfNeeded`, `appendDomChild`)
 
 #### 10. XSS Protection
 **Current behavior:** No sanitization of attribute values
@@ -186,16 +195,16 @@ These features are intentionally **not** planned:
 - ✅ Fix TypeScript compilation error with number children in appendDomChild
 
 ### v0.1.5 (Next Release)
-- Add TypeScript JSX type definitions
-- Add LICENSE file
-- Add CONTRIBUTING.md
-- Add examples directory
-- Test dist output
-- Source maps verification
-- Comprehensive test coverage for all edge cases
+- [x] Nested SVG namespace handling (#9)
+- [ ] Add TypeScript JSX type definitions
+- [ ] Add LICENSE file
+- [ ] Add CONTRIBUTING.md
+- [ ] Add examples directory
+- [ ] Test dist output
+- [ ] Source maps verification
+- [ ] Comprehensive test coverage for all edge cases
 
 ### Future (v0.2.0+)
-- Nested SVG namespace handling (#9)
 - Memory management patterns/utilities (#11)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed
 - XSS protection considerations - if needed

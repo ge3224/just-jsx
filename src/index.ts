@@ -26,6 +26,148 @@
  * and fragments to the DOM.
  */
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+const HTML_NS = "http://www.w3.org/1999/xhtml";
+
+const svgTagNames: string[] = [
+  "a_svg",
+  "animate",
+  "animatemotion",
+  "animatetransform",
+  "audio_svg",
+  "canvas_svg",
+  "circle",
+  "clippath",
+  "defs",
+  "desc",
+  "discard",
+  "ellipse",
+  "feblend",
+  "fecolormatrix",
+  "fecomponenttransfer",
+  "fecomposite",
+  "feconvolvematrix",
+  "fediffuselighting",
+  "fedisplacementmap",
+  "fedistantlight",
+  "fedropshadow",
+  "feflood",
+  "fefunca",
+  "fefuncb",
+  "fefuncg",
+  "fefuncr",
+  "fegaussianblur",
+  "feimage",
+  "femerge",
+  "femergenode",
+  "femorphology",
+  "feoffset",
+  "fepointlight",
+  "fespecularlighting",
+  "fespotlight",
+  "fetile",
+  "feturbulence",
+  "filter",
+  "foreignobject",
+  "g",
+  "iframe_svg",
+  "image_svg",
+  "line",
+  "lineargradient",
+  "marker",
+  "mask",
+  "metadata",
+  "mpath",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "radialgradient",
+  "rect",
+  "script_svg",
+  "set",
+  "stop",
+  "style_svg",
+  "svg",
+  "switch",
+  "symbol",
+  "text",
+  "textpath",
+  "title",
+  "tspan",
+  "unknown",
+  "use",
+  "video_svg",
+  "view",
+];
+
+function isSvgTag(tagName: string): boolean {
+  // Check if the tagName is in the list of SVG tag names
+  return svgTagNames.includes(tagName.toLowerCase());
+}
+
+/**
+ * Checks if a child element's namespace needs correction based on parent context
+ * and fixes it by cloning with the correct namespace
+ */
+function fixNamespaceIfNeeded(parent: Element, child: Element): Element {
+  const parentNS = parent.namespaceURI;
+  const parentTag = parent.tagName;
+  const childNS = child.namespaceURI;
+  const childTag = child.tagName;
+  const childTagLower = childTag.toLowerCase();
+
+  // Determine what the child's namespace should be
+  let expectedNS: string | null = null;
+
+  if (parentTag === 'foreignObject') {
+    // Children of foreignObject should be HTML
+    if (isSvgTag(childTagLower)) {
+      // Unless the child is an SVG element
+      expectedNS = SVG_NS;
+    } else {
+      expectedNS = HTML_NS;
+    }
+  } else if (parentNS === SVG_NS) {
+    // Children of SVG elements should be SVG
+    expectedNS = SVG_NS;
+  } else if (parentNS === HTML_NS) {
+    // Children of HTML elements should be HTML unless they're SVG tags
+    if (isSvgTag(childTagLower)) {
+      expectedNS = SVG_NS;
+    } else {
+      expectedNS = HTML_NS;
+    }
+  }
+
+  // If namespaces match or no correction needed, return original
+  if (!expectedNS || childNS === expectedNS) {
+    return child;
+  }
+
+  // Clone the element with the correct namespace
+  // Note: HTML namespace expects lowercase tag names, SVG preserves casing
+  const tagForCreation = (expectedNS === HTML_NS) ? childTagLower : childTag;
+  const corrected = document.createElementNS(expectedNS, tagForCreation);
+
+  // Copy attributes
+  Array.from(child.attributes).forEach((attr) => {
+    corrected.setAttribute(attr.name, attr.value);
+  });
+
+  // Recursively fix and copy children
+  Array.from(child.childNodes).forEach((grandchild) => {
+    if (grandchild.nodeType === Node.ELEMENT_NODE) {
+      const fixed = fixNamespaceIfNeeded(corrected, grandchild as Element);
+      corrected.appendChild(fixed);
+    } else {
+      corrected.appendChild(grandchild.cloneNode(true));
+    }
+  });
+
+  return corrected;
+}
+
 /**
  * appendDomChild is a helper function that appends child nodes (DOM nodes,
  * strings, or numbers) to a parent node. This function is used by the
@@ -47,89 +189,16 @@ function appendDomChild(parent: Node, child: Node | string | number | (Node | st
   } else if (typeof child === "string" || typeof child === "number") {
     // If child is a string or number, create a text node
     parent.appendChild(document.createTextNode(String(child)));
+  } else if (child.nodeType === Node.ELEMENT_NODE) {
+    // Child is a DOM element, check and fix namespace if needed
+    const parentElement = parent as Element;
+    const childElement = child as Element;
+    const corrected = fixNamespaceIfNeeded(parentElement, childElement);
+    parent.appendChild(corrected);
   } else {
-    // Child is a DOM node, append it directly
+    // Other node types (text nodes, comments, etc.)
     parent.appendChild(child);
   }
-}
-
-const SVG_NS = "http://www.w3.org/2000/svg";
-
-const svgTagNames: string[] = [
-  "a_svg",
-  "animate",
-  "animateMotion",
-  "animateTransform",
-  "audio_svg",
-  "canvas_svg",
-  "circle",
-  "clipPath",
-  "defs",
-  "desc",
-  "discard",
-  "ellipse",
-  "feBlend",
-  "feColorMatrix",
-  "feComponentTransfer",
-  "feComposite",
-  "feConvolveMatrix",
-  "feDiffuseLighting",
-  "feDisplacementMap",
-  "feDistantLight",
-  "feDropShadow",
-  "feFlood",
-  "feFuncA",
-  "feFuncB",
-  "feFuncG",
-  "feFuncR",
-  "feGaussianBlur",
-  "feImage",
-  "feMerge",
-  "feMergeNode",
-  "feMorphology",
-  "feOffset",
-  "fePointLight",
-  "feSpecularLighting",
-  "feSpotLight",
-  "feTile",
-  "feTurbulence",
-  "filter",
-  "foreignObject",
-  "g",
-  "iframe_svg",
-  "image_svg",
-  "line",
-  "linearGradient",
-  "marker",
-  "mask",
-  "metadata",
-  "mpath",
-  "path",
-  "pattern",
-  "polygon",
-  "polyline",
-  "radialGradient",
-  "rect",
-  "script_svg",
-  "set",
-  "stop",
-  "style_svg",
-  "svg",
-  "switch",
-  "symbol",
-  "text",
-  "textPath",
-  "title",
-  "tspan",
-  "unknown",
-  "use",
-  "video_svg",
-  "view",
-];
-
-function isSvgTag(tagName: string): boolean {
-  // Check if the tagName is in the list of SVG tag names
-  return svgTagNames.includes(tagName.toLowerCase());
 }
 
 function namespace(tag: string): string | null {
