@@ -5,6 +5,41 @@
  * Provides createDomElement and createDomFragment functions for JSX transformation.
  */
 
+// ============================================================================
+// Type Definitions
+// ============================================================================
+
+/** Props that can be passed to any JSX element */
+type DOMAttributes = {
+  children?: JSX.Element | JSX.Element[];
+  key?: string | number;
+  ref?: any;
+  [key: string]: any;
+};
+
+/** JSX namespace for TypeScript compiler */
+declare global {
+  namespace JSX {
+    /** Result of JSX expression */
+    type Element = Node | DocumentFragment;
+
+    /** Props for intrinsic HTML/SVG elements */
+    type IntrinsicElements = {
+      [K in keyof HTMLElementTagNameMap]: Partial<HTMLElementTagNameMap[K]> & DOMAttributes;
+    } & {
+      [K in keyof SVGElementTagNameMap]: Partial<SVGElementTagNameMap[K]> & DOMAttributes;
+    };
+
+    /** Props for functional components */
+    interface ElementChildrenAttribute {
+      children: {};
+    }
+  }
+}
+
+/** Functional component type */
+export type FunctionalComponent<P = {}> = (props: P & { children?: JSX.Element | JSX.Element[] }) => JSX.Element;
+
 const SVG_NS = "http://www.w3.org/2000/svg";
 const HTML_NS = "http://www.w3.org/1999/xhtml";
 
@@ -100,13 +135,13 @@ function setProp(element: Element, name: string, value: any): void {
   }
 }
 
-export function createDomElement(
-  tag: string | ((props: any) => any),
-  props: Record<string, any>,
-  ...children: (Node | string | number)[]
-) {
+export function createDomElement<P = {}>(
+  tag: string | FunctionalComponent<P>,
+  props: (P & DOMAttributes) | null,
+  ...children: JSX.Element[]
+): JSX.Element {
   if (typeof tag === "function") {
-    return tag({ ...(props || {}), children });
+    return tag({ ...(props || {} as P), children });
   }
 
   const ns = isSvgTag(tag) ? SVG_NS : null;
@@ -120,7 +155,10 @@ export function createDomElement(
   return element;
 }
 
-export function createDomFragment(props: any, ...children: (Node | string | number)[]) {
+export function createDomFragment(
+  props: { children?: JSX.Element | JSX.Element[] } | null,
+  ...children: JSX.Element[]
+): DocumentFragment {
   const fragment = new DocumentFragment();
   const actualChildren = props?.children || children;
   const childArray = Array.isArray(actualChildren) ? actualChildren : [actualChildren];

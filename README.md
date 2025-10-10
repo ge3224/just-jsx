@@ -3,7 +3,7 @@
 [![No Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://github.com/ge3224/just-jsx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A vendorable vanilla TypeScript JSX parser with zero dependencies. Just ~130 lines of type-safe DOM rendering, built to be copied into your project—framework-agnostic and audit-friendly.
+A vendorable vanilla TypeScript JSX parser with zero dependencies. Just ~171 lines of type-safe DOM rendering, built to be copied into your project—framework-agnostic and audit-friendly.
 
 Built for projects where vanilla TypeScript makes sense and stability beats ecosystem churn.
 
@@ -13,8 +13,8 @@ Built for projects where vanilla TypeScript makes sense and stability beats ecos
 - **Framework-agnostic**: Works with any build tool that supports JSX (TypeScript, Vite, SWC, Babel)
 - **DOM rendering**: JSX components and fragments that compile to real DOM elements
 - **SVG support**: First-class support for inline SVG elements
-- **Type-safe**: Full TypeScript support with proper type inference
-- **Audit-friendly**: Small enough to actually read and understand (~130 lines)
+- **Type-safe**: Full TypeScript support with JSX type definitions, proper type inference, and exported component types
+- **Audit-friendly**: Small enough to actually read and understand (~171 lines including comprehensive types)
 
 ## Installation
 
@@ -175,6 +175,39 @@ const Icon = () => {
 
 document.body.appendChild(<Icon />);
 ```
+
+### TypeScript Types
+
+Just JSX includes full TypeScript type definitions for type-safe JSX:
+
+```tsx
+import { FunctionalComponent } from './just-jsx';
+
+// Type-safe functional component
+const Greeting: FunctionalComponent<{ name: string }> = ({ name, children }) => {
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      {children}
+    </div>
+  );
+};
+
+// Full autocomplete and type checking for HTML/SVG elements
+const element = (
+  <button
+    onClick={(e) => console.log(e.target)}  // e is typed as MouseEvent
+    disabled={false}
+    className="btn"
+  >
+    Click me
+  </button>
+);
+```
+
+The library exports:
+- `FunctionalComponent<P>` - Type for functional components with props type P
+- Full JSX namespace with `JSX.Element` and `JSX.IntrinsicElements`
 
 ## API
 

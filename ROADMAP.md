@@ -5,8 +5,8 @@ This document tracks known limitations, edge cases, and potential future improve
 ## Missing Features
 
 ### Documentation & Project Files
-- [ ] **TypeScript JSX type definitions** - Add `JSX.IntrinsicElements` and `JSX.Element` type declarations
-- [ ] **Type exports** - Export prop types and component types for TypeScript users
+- [x] **TypeScript JSX type definitions** - Add `JSX.IntrinsicElements` and `JSX.Element` type declarations (v0.1.6)
+- [x] **Type exports** - Export prop types and component types for TypeScript users (v0.1.6)
 - [x] **CHANGELOG.md** - Version tracking and breaking changes documentation
 - [ ] **CONTRIBUTING.md** - Guidelines for contributing to the project
 - [ ] **LICENSE file** - MIT license file
@@ -211,7 +211,7 @@ These features are intentionally **not** planned:
 - [x] XSS protection documentation (#10)
 - [x] Memory management patterns documentation (#11)
 - [x] Add examples directory with recipes
-- [ ] Add TypeScript JSX type definitions
+- [x] Add TypeScript JSX type definitions (inline in source)
 - [ ] Add LICENSE file
 - [ ] Add CONTRIBUTING.md
 - [ ] Test dist output

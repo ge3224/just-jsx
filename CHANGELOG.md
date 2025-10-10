@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Security Considerations section in README with safe coding patterns and CSP guidance
 - Examples directory with recipes for advanced patterns
 - Memory management recipe with 5 cleanup patterns (manual, AbortController, manager, lifecycle, hooks)
+- TypeScript JSX type definitions (inline in source)
+  - `JSX.IntrinsicElements` with full HTML/SVG element support
+  - `JSX.Element` type for JSX expressions
+  - `FunctionalComponent<P>` type export for component authors
+  - Type-safe props for all intrinsic elements
+  - Proper children type inference
 
 ### Changed
 - Optimized code size from 374 to 129 lines (65% reduction)
@@ -21,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Simplified conditionals and reduced verbose comments
   - Inlined simple functions
 - Updated README claims from ~200 to ~130 lines
+- Source file now 171 lines with comprehensive type definitions (+42 lines for types)
 
 ## [0.1.5] - 2025-10-10
 
