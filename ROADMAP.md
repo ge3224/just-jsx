@@ -14,8 +14,8 @@ This document tracks known limitations, edge cases, and potential future improve
 - [x] **CI/CD pipeline** - GitHub Actions for automated testing and builds
 
 ### Build & Distribution
-- [ ] **Test dist output** - Verify built artifacts work correctly
-- [ ] **Source maps** - Ensure proper debugging experience
+- [x] **Test dist output** - Verify built artifacts work correctly (v0.1.6)
+- [x] **Source maps** - Ensure proper debugging experience (v0.1.6)
 
 ## Edge Cases & Known Issues
 
@@ -214,8 +214,8 @@ These features are intentionally **not** planned:
 - [x] Add TypeScript JSX type definitions (inline in source)
 - [x] Add LICENSE file
 - [x] Add CONTRIBUTING.md
-- [ ] Test dist output
-- [ ] Source maps verification
+- [x] Test dist output
+- [x] Source maps verification
 - [ ] Comprehensive test coverage for all edge cases
 
 ### Future (v0.2.0+)

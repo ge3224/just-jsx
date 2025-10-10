@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Dist Output - Just JSX</title>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script type="module">
+    // Import from dist
+    import { createDomElement, createDomFragment } from '../../dist/index.js';
+
+    // Test 1: Simple element
+    const greeting = createDomElement('p', null, 'Hello from dist!');
+    document.getElementById('app').appendChild(greeting);
+
+    // Test 2: Element with props
+    const button = createDomElement('button', {
+      onclick: () => alert('Dist build works!'),
+      style: { 'background-color': 'blue', color: 'white', padding: '10px' }
+    }, 'Click me');
+    document.getElementById('app').appendChild(button);
+
+    // Test 3: Fragment
+    const fragment = createDomFragment(null,
+      createDomElement('h2', null, 'Fragment Test'),
+      createDomElement('p', null, 'First paragraph'),
+      createDomElement('p', null, 'Second paragraph')
+    );
+    document.getElementById('app').appendChild(fragment);
+
+    // Test 4: SVG
+    const svg = createDomElement('svg', { width: '100', height: '100' },
+      createDomElement('circle', {
+        cx: '50',
+        cy: '50',
+        r: '40',
+        stroke: 'green',
+        'stroke-width': '4',
+        fill: 'yellow'
+      })
+    );
+    document.getElementById('app').appendChild(svg);
+
+    // Test 5: Functional component
+    const Greeting = (props) => {
+      return createDomElement('div', null,
+        createDomElement('h3', null, `Hello, ${props.name}!`),
+        ...props.children
+      );
+    };
+
+    const component = createDomElement(Greeting, { name: 'World' },
+      createDomElement('p', null, 'This is a child element')
+    );
+    document.getElementById('app').appendChild(component);
+
+    console.log('✓ All dist output tests passed!');
+  </script>
+</body>
+</html>

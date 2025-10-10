@@ -312,6 +312,9 @@ pnpm test:watch
 # Run tests with coverage
 pnpm test:coverage
 
+# Test dist output
+pnpm test:dist
+
 # Build
 pnpm build
 

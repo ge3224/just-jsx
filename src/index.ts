@@ -21,7 +21,7 @@ type DOMAttributes = {
 declare global {
   namespace JSX {
     /** Result of JSX expression */
-    type Element = Node | DocumentFragment;
+    type Element = Node | DocumentFragment | string | number | boolean | null | undefined;
 
     /** Props for intrinsic HTML/SVG elements */
     type IntrinsicElements = {
@@ -96,17 +96,17 @@ function fixNamespaceIfNeeded(parent: Element, child: Element): Element {
   return corrected;
 }
 
-function appendDomChild(parent: Node, child: Node | string | number | (Node | string | number)[]): void {
+function appendDomChild(parent: Node, child: JSX.Element | JSX.Element[]): void {
   if (child == null || typeof child === "boolean") return;
 
   if (Array.isArray(child)) {
     child.forEach(c => appendDomChild(parent, c));
   } else if (typeof child === "string" || typeof child === "number") {
     parent.appendChild(document.createTextNode(String(child)));
-  } else if (child.nodeType === Node.ELEMENT_NODE) {
+  } else if ((child as Node).nodeType === Node.ELEMENT_NODE) {
     parent.appendChild(fixNamespaceIfNeeded(parent as Element, child as Element));
   } else {
-    parent.appendChild(child);
+    parent.appendChild(child as Node);
   }
 }
 

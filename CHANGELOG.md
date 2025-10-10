@@ -15,12 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Memory management recipe with 5 cleanup patterns (manual, AbortController, manager, lifecycle, hooks)
 - TypeScript JSX type definitions (inline in source)
   - `JSX.IntrinsicElements` with full HTML/SVG element support
-  - `JSX.Element` type for JSX expressions
+  - `JSX.Element` type for JSX expressions (includes primitives: string, number, boolean, null, undefined)
   - `FunctionalComponent<P>` type export for component authors
   - Type-safe props for all intrinsic elements
   - Proper children type inference
 - MIT LICENSE file
 - CONTRIBUTING.md with guidelines for contributors
+- Dist output tests in `tests/dist/` directory
+  - `runtime.test.mjs`: 10 runtime tests verifying built artifacts work correctly
+  - `types.test.ts`: TypeScript type checking for dist declarations
+  - `browser.test.html`: Manual browser testing file
+  - New `pnpm test:dist` script
 
 ### Changed
 - Optimized code size from 374 to 129 lines (65% reduction)
@@ -28,8 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Condensed property and boolean attribute declarations
   - Simplified conditionals and reduced verbose comments
   - Inlined simple functions
-- Updated README claims from ~200 to ~130 lines
+- Updated README claims from ~200 to ~171 lines
 - Source file now 171 lines with comprehensive type definitions (+42 lines for types)
+- `JSX.Element` type now includes primitive types for full JSX expression support
+- `prepublishOnly` script now includes dist tests
 
 ## [0.1.5] - 2025-10-10
 
