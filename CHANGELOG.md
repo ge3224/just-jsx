@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.6] - 2025-10-10
+## [0.1.6] - 2025-10-12
 
 ### Added
 - Security Considerations section in README with safe coding patterns and CSP guidance
@@ -26,6 +26,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `types.test.ts`: TypeScript type checking for dist declarations
   - `browser.test.html`: Manual browser testing file
   - New `pnpm test:dist` script
+- Comprehensive test coverage for all edge cases
+  - 34 new tests added (50 → 84 tests total)
+  - 100% statement coverage
+  - 100% branch coverage (improved from 92.18%)
+  - 100% function coverage
+  - Tests for array children (flat, nested, empty arrays)
+  - Tests for style edge cases (empty object, mixed units)
+  - Tests for special attributes (className, htmlFor, data-*, aria-*, role)
+  - Tests for media element properties (video/audio muted, volume, currentTime, playbackRate)
+  - Tests for content properties (innerHTML, textContent, innerText)
+  - Tests for multiple event listeners and various event types
+  - Tests for numeric/special prop values (0, empty string, NaN)
+  - Tests for functional components edge cases (no children, undefined/null props)
+  - Tests for fragment edge cases (empty, null/undefined/boolean children)
+  - Tests for additional SVG elements (path, polygon, line, rect)
+  - Tests for indeterminate checkbox property
+  - Tests for namespace correction with manually constructed elements
 
 ### Changed
 - Optimized code size from 374 to 129 lines (65% reduction)

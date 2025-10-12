@@ -206,7 +206,7 @@ These features are intentionally **not** planned:
 ### ~~v0.1.5~~ ✅ Released
 - ✅ Nested SVG namespace handling (#9)
 
-### v0.1.6 (Next Release)
+### ~~v0.1.6~~ ✅ Released
 - [x] Code optimization (374 → 129 lines, 65% reduction)
 - [x] XSS protection documentation (#10)
 - [x] Memory management patterns documentation (#11)
@@ -216,7 +216,7 @@ These features are intentionally **not** planned:
 - [x] Add CONTRIBUTING.md
 - [x] Test dist output
 - [x] Source maps verification
-- [ ] Comprehensive test coverage for all edge cases
+- [x] Comprehensive test coverage for all edge cases (84 tests, 100% branch coverage)
 
 ### Future (v0.2.0+)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed

@@ -159,6 +159,13 @@ describe("Test createDomElement", () => {
     expect(checkedBox.checked).toBe(true);
   });
 
+  it("handles checkbox indeterminate as property", () => {
+    const checkbox = <input type="checkbox" indeterminate={true} /> as HTMLInputElement;
+    document.body.appendChild(checkbox);
+
+    expect(checkbox.indeterminate).toBe(true);
+  });
+
   it("handles for attribute on labels", () => {
     const label = <label for="input-id">Name</label> as HTMLLabelElement;
     document.body.appendChild(label);
@@ -382,6 +389,334 @@ describe("Test createDomElement", () => {
     expect(innerSvg.namespaceURI).toBe("http://www.w3.org/2000/svg");
     expect(circle.namespaceURI).toBe("http://www.w3.org/2000/svg");
   });
+
+  it("handles manually constructed element with wrong namespace and children", () => {
+    // Manually create a div in the WRONG namespace (SVG) with children
+    const wrongNamespaceDiv = document.createElementNS("http://www.w3.org/2000/svg", "div");
+
+    // Add text node child
+    wrongNamespaceDiv.appendChild(document.createTextNode("Text content "));
+
+    // Add element child (also in wrong namespace)
+    const wrongNamespaceSpan = document.createElementNS("http://www.w3.org/2000/svg", "span");
+    wrongNamespaceSpan.textContent = "in span";
+    wrongNamespaceDiv.appendChild(wrongNamespaceSpan);
+
+    // Verify it's in wrong namespace before correction
+    expect(wrongNamespaceDiv.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(wrongNamespaceSpan.namespaceURI).toBe("http://www.w3.org/2000/svg");
+
+    // Use it in a context where it should be HTML (inside foreignObject)
+    const container = (
+      <svg>
+        <foreignObject x="0" y="0" width="200" height="100">
+          {wrongNamespaceDiv}
+        </foreignObject>
+      </svg>
+    ) as SVGElement;
+
+    document.body.appendChild(container);
+
+    // After insertion, it should be corrected to HTML namespace
+    const correctedDiv = container.querySelector("div") as HTMLElement;
+    const correctedSpan = correctedDiv?.querySelector("span") as HTMLElement;
+
+    expect(correctedDiv).not.toBeNull();
+    expect(correctedDiv.namespaceURI).toBe("http://www.w3.org/1999/xhtml");
+    expect(correctedDiv.textContent).toBe("Text content in span");
+
+    // The span child should also be corrected
+    expect(correctedSpan).not.toBeNull();
+    expect(correctedSpan.namespaceURI).toBe("http://www.w3.org/1999/xhtml");
+  });
+
+  it("handles SVG path element", () => {
+    const svg = (
+      <svg width="100" height="100">
+        <path d="M10 10 L90 90" stroke="black" />
+      </svg>
+    ) as SVGElement;
+    document.body.appendChild(svg);
+
+    const path = svg.querySelector("path") as SVGPathElement;
+    expect(path.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(path.getAttribute("d")).toBe("M10 10 L90 90");
+  });
+
+  it("handles SVG polygon element", () => {
+    const svg = (
+      <svg width="100" height="100">
+        <polygon points="50,10 90,90 10,90" fill="red" />
+      </svg>
+    ) as SVGElement;
+    document.body.appendChild(svg);
+
+    const polygon = svg.querySelector("polygon") as SVGPolygonElement;
+    expect(polygon.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(polygon.getAttribute("points")).toBe("50,10 90,90 10,90");
+  });
+
+  it("handles SVG line and rect elements", () => {
+    const svg = (
+      <svg width="100" height="100">
+        <rect x="10" y="10" width="30" height="30" fill="blue" />
+        <line x1="0" y1="0" x2="100" y2="100" stroke="green" />
+      </svg>
+    ) as SVGElement;
+    document.body.appendChild(svg);
+
+    const rect = svg.querySelector("rect") as SVGRectElement;
+    const line = svg.querySelector("line") as SVGLineElement;
+
+    expect(rect.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(line.namespaceURI).toBe("http://www.w3.org/2000/svg");
+  });
+
+  it("handles array children", () => {
+    const items = ["Apple", "Banana", "Cherry"];
+    document.body.appendChild(
+      <ul>
+        {items.map(item => <li>{item}</li>)}
+      </ul>
+    );
+    expect(document.body.innerHTML).toBe("<ul><li>Apple</li><li>Banana</li><li>Cherry</li></ul>");
+  });
+
+  it("handles mixed array and single children", () => {
+    const items = ["Item 1", "Item 2"];
+    document.body.appendChild(
+      <div>
+        <h1>Title</h1>
+        {items.map(item => <p>{item}</p>)}
+        <footer>End</footer>
+      </div>
+    );
+    expect(document.body.innerHTML).toBe("<div><h1>Title</h1><p>Item 1</p><p>Item 2</p><footer>End</footer></div>");
+  });
+
+  it("handles deeply nested array children", () => {
+    const matrix = [
+      ["a", "b"],
+      ["c", "d"]
+    ];
+    document.body.appendChild(
+      <div>
+        {matrix.map(row => row.map(cell => <span>{cell}</span>))}
+      </div>
+    );
+    expect(document.body.innerHTML).toBe("<div><span>a</span><span>b</span><span>c</span><span>d</span></div>");
+  });
+
+  it("handles empty array children", () => {
+    const items: string[] = [];
+    document.body.appendChild(
+      <div>
+        {items.map(item => <p>{item}</p>)}
+      </div>
+    );
+    expect(document.body.innerHTML).toBe("<div></div>");
+  });
+
+  it("handles style with empty object", () => {
+    const div = <div style={{}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+    expect(div.getAttribute("style")).toBe("");
+  });
+
+  it("handles style with unitless properties that need px", () => {
+    const div = <div style={{width: 100, height: 50, 'z-index': 10}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+    expect(div.getAttribute("style")).toBe("width: 100px; height: 50px; z-index: 10px");
+  });
+
+  it("handles style with string values that already have units", () => {
+    const div = <div style={{width: '50%', height: '2em', margin: '10px 20px'}} /> as HTMLDivElement;
+    document.body.appendChild(div);
+    expect(div.getAttribute("style")).toBe("width: 50%; height: 2em; margin: 10px 20px");
+  });
+
+  it("handles className attribute", () => {
+    const div = <div className="test-class" /> as HTMLDivElement;
+    document.body.appendChild(div);
+    expect(div.getAttribute("classname")).toBe("test-class");
+    expect(div.className).toBe("");
+  });
+
+  it("handles class attribute", () => {
+    const div = <div class="test-class" /> as HTMLDivElement;
+    document.body.appendChild(div);
+    expect(div.getAttribute("class")).toBe("test-class");
+    expect(div.className).toBe("test-class");
+  });
+
+  it("handles htmlFor on label", () => {
+    const label = <label htmlFor="input-id">Label</label> as HTMLLabelElement;
+    document.body.appendChild(label);
+    expect(label.getAttribute("htmlfor")).toBe("input-id");
+  });
+
+  it("handles video element properties", () => {
+    const video = <video muted={true} volume={0.5} currentTime={10} /> as HTMLVideoElement;
+    document.body.appendChild(video);
+
+    expect(video.muted).toBe(true);
+    expect(video.volume).toBe(0.5);
+    expect(video.currentTime).toBe(10);
+  });
+
+  it("handles audio element properties", () => {
+    const audio = <audio muted={true} playbackRate={1.5} /> as HTMLAudioElement;
+    document.body.appendChild(audio);
+
+    expect(audio.muted).toBe(true);
+    expect(audio.playbackRate).toBe(1.5);
+  });
+
+  it("handles innerHTML property", () => {
+    const div = <div innerHTML="<strong>Bold</strong>" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.innerHTML).toBe("<strong>Bold</strong>");
+  });
+
+  it("handles textContent property", () => {
+    const div = <div textContent="Plain text" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.textContent).toBe("Plain text");
+  });
+
+  it("handles innerText property", () => {
+    const div = <div innerText="Inner text" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.innerText).toBe("Inner text");
+  });
+
+  it("handles multiple event listeners on same element", () => {
+    const clickHandler = vi.fn();
+    const mouseoverHandler = vi.fn();
+    const button = <button onClick={clickHandler} onMouseover={mouseoverHandler}>Test</button> as HTMLButtonElement;
+    document.body.appendChild(button);
+
+    button.click();
+    expect(clickHandler).toHaveBeenCalledTimes(1);
+
+    button.dispatchEvent(new MouseEvent("mouseover"));
+    expect(mouseoverHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles onInput event", () => {
+    const inputHandler = vi.fn();
+    const input = <input onInput={inputHandler} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    input.dispatchEvent(new InputEvent("input"));
+    expect(inputHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles onChange event", () => {
+    const changeHandler = vi.fn();
+    const input = <input onChange={changeHandler} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    input.dispatchEvent(new Event("change"));
+    expect(changeHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles onKeypress event", () => {
+    const keypressHandler = vi.fn();
+    const input = <input onKeypress={keypressHandler} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    input.dispatchEvent(new KeyboardEvent("keypress"));
+    expect(keypressHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles onFocus and onBlur events", () => {
+    const focusHandler = vi.fn();
+    const blurHandler = vi.fn();
+    const input = <input onFocus={focusHandler} onBlur={blurHandler} /> as HTMLInputElement;
+    document.body.appendChild(input);
+
+    input.dispatchEvent(new FocusEvent("focus"));
+    expect(focusHandler).toHaveBeenCalledTimes(1);
+
+    input.dispatchEvent(new FocusEvent("blur"));
+    expect(blurHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles data-* attributes", () => {
+    const div = <div data-id="123" data-name="test" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("data-id")).toBe("123");
+    expect(div.getAttribute("data-name")).toBe("test");
+  });
+
+  it("handles aria-* attributes", () => {
+    const button = <button aria-label="Close" aria-hidden="true" /> as HTMLButtonElement;
+    document.body.appendChild(button);
+
+    expect(button.getAttribute("aria-label")).toBe("Close");
+    expect(button.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("handles role attribute", () => {
+    const div = <div role="button" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("role")).toBe("button");
+  });
+
+  it("handles attribute with value 0", () => {
+    const div = <div tabindex={0} /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("tabindex")).toBe("0");
+  });
+
+  it("handles attribute with empty string", () => {
+    const div = <div title="" /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("title")).toBe("");
+  });
+
+  it("handles prop value NaN", () => {
+    const div = <div data-value={NaN} /> as HTMLDivElement;
+    document.body.appendChild(div);
+
+    expect(div.getAttribute("data-value")).toBe("NaN");
+  });
+
+  it("handles functional component without children", () => {
+    const SimpleComponent = () => <div>No children</div>;
+    document.body.appendChild(<SimpleComponent />);
+
+    expect(document.body.innerHTML).toBe("<div>No children</div>");
+  });
+
+  it("handles functional component with no children prop passed", () => {
+    const Component = ({ title }) => <div>{title}</div>;
+    document.body.appendChild(<Component title="Test" />);
+
+    expect(document.body.innerHTML).toBe("<div>Test</div>");
+  });
+
+  it("handles functional component with undefined props", () => {
+    const Component = (props) => <div>{props.value || "default"}</div>;
+    document.body.appendChild(<Component value={undefined} />);
+
+    expect(document.body.innerHTML).toBe("<div>default</div>");
+  });
+
+  it("handles functional component with null props", () => {
+    const Component = (props) => <div>{props.value || "default"}</div>;
+    document.body.appendChild(<Component value={null} />);
+
+    expect(document.body.innerHTML).toBe("<div>default</div>");
+  });
 });
 
 describe("Test createDomFragment", () => {
@@ -478,5 +813,140 @@ describe("Test createDomFragment", () => {
     expect(document.body.innerHTML).toBe(
       `<p id="${id}">Hello</p><p>World!</p>`,
     );
+  });
+
+  it("handles empty fragment", () => {
+    const EmptyFrag = () => <></>;
+    document.body.appendChild(<EmptyFrag />);
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("");
+  });
+
+  it("handles fragment with null children", () => {
+    const Frag = () => (
+      <>
+        {null}
+        <p>Content</p>
+        {null}
+      </>
+    );
+    document.body.appendChild(<Frag />);
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("<p>Content</p>");
+  });
+
+  it("handles fragment with undefined children", () => {
+    const value = undefined;
+    const Frag = () => (
+      <>
+        {value}
+        <p>Content</p>
+      </>
+    );
+    document.body.appendChild(<Frag />);
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("<p>Content</p>");
+  });
+
+  it("handles fragment with boolean children", () => {
+    const Frag = () => (
+      <>
+        {true}
+        {false}
+        <p>Content</p>
+      </>
+    );
+    document.body.appendChild(<Frag />);
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("<p>Content</p>");
+  });
+
+  it("handles fragment with single non-array child via props", () => {
+    // Pass single child via props.children (not array)
+    const frag = createDomFragment({ children: <p>Props child</p> });
+    document.body.appendChild(frag);
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("<p>Props child</p>");
+  });
+
+  it("handles fragment with single non-array child via rest params", () => {
+    // Manually call createDomFragment with a single child (not array)
+    const frag = createDomFragment(null, <p>Single child</p>);
+    document.body.appendChild(frag);
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("<p>Single child</p>");
+  });
+
+  it("handles manually constructed HTML element used as SVG child", () => {
+    // Create an HTML circle element (wrong namespace for SVG)
+    const htmlCircle = document.createElement("CIRCLE");
+    htmlCircle.setAttribute("cx", "25");
+    htmlCircle.setAttribute("cy", "25");
+    htmlCircle.setAttribute("r", "20");
+    htmlCircle.appendChild(document.createTextNode("text"));
+
+    // Verify it's in HTML namespace
+    expect(htmlCircle.namespaceURI).toBe("http://www.w3.org/1999/xhtml");
+    expect(htmlCircle.tagName).toBe("CIRCLE");
+
+    // Try to use it as an SVG child
+    const container = (
+      <svg width="100" height="100">
+        {htmlCircle}
+      </svg>
+    ) as SVGElement;
+
+    document.body.appendChild(container);
+
+    // After insertion, check if it was corrected
+    // SVG querySelector is case-sensitive, HTML created "CIRCLE" but SVG needs "circle"
+    const children = Array.from(container.children);
+    expect(children.length).toBe(1);
+
+    const corrected = children[0] as Element;
+    expect(corrected.tagName.toLowerCase()).toBe("circle");
+    expect(corrected.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(corrected.getAttribute("cx")).toBe("25");
+    expect(corrected.textContent).toBe("text");
+  });
+
+  it("handles SVG element in wrong namespace inside foreignObject", () => {
+    // Create an SVG circle element but in HTML namespace (wrong!)
+    const wrongNsCircle = document.createElement("circle");
+    wrongNsCircle.setAttribute("cx", "50");
+    wrongNsCircle.setAttribute("cy", "50");
+    wrongNsCircle.setAttribute("r", "40");
+
+    // Verify it's in HTML namespace (wrong for SVG element)
+    // HTML elements have uppercase tag names
+    expect(wrongNsCircle.namespaceURI).toBe("http://www.w3.org/1999/xhtml");
+    expect(wrongNsCircle.tagName).toBe("CIRCLE");
+
+    // Use it inside foreignObject - SVG element inside foreignObject should be corrected to SVG namespace
+    const container = (
+      <svg width="200" height="200">
+        <foreignObject x="0" y="0" width="100" height="100">
+          {wrongNsCircle}
+        </foreignObject>
+      </svg>
+    ) as SVGElement;
+
+    document.body.appendChild(container);
+
+    // The circle should be corrected to SVG namespace
+    const foreignObject = container.querySelector("foreignObject") as SVGForeignObjectElement;
+    const children = Array.from(foreignObject.children);
+    expect(children.length).toBe(1);
+
+    const correctedCircle = children[0] as SVGCircleElement;
+    expect(correctedCircle.tagName.toLowerCase()).toBe("circle");
+    expect(correctedCircle.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    expect(correctedCircle.getAttribute("cx")).toBe("50");
   });
 });
