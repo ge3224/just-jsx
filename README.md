@@ -1,12 +1,11 @@
 # Just JSX
 
+[![Version](https://img.shields.io/badge/version-0.1.6-blue.svg)](https://github.com/ge3224/just-jsx)
 [![No Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://github.com/ge3224/just-jsx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/ge3224/just-jsx)
 
-**Write JSX without React.** A minimal TypeScript library (~171 lines) that transforms JSX syntax into vanilla DOM operations. Zero dependencies, framework-free, designed to be copied directly into your codebase.
-
-Perfect for building web UIs when you want JSX's declarative syntax but don't need React's complexity.
+JSX syntax for vanilla TypeScript projects. A ~195-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
 
 ```tsx
 const App = ({ name }) => (
@@ -23,17 +22,15 @@ document.body.appendChild(<App name="World" />);
 
 ## Why Just JSX?
 
-**JSX is great. React is optional.**
-
 Just JSX gives you:
 - ✅ Familiar JSX syntax for building UIs
 - ✅ Direct DOM manipulation (no virtual DOM overhead)
 - ✅ Full TypeScript support with proper type inference
 - ✅ SVG elements work out of the box
-- ✅ Small enough to audit in 10 minutes (~171 lines)
+- ✅ Small enough to audit in 10 minutes (~195 lines)
 - ✅ No build-time or runtime dependencies
 
-Use it when you want the ergonomics of JSX without committing to a framework.
+Vendor it into your project. Read it, understand it, modify it as needed.
 
 ## Quick Start
 
@@ -52,7 +49,7 @@ curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/
 
 ### 2. Configure your build tool
 
-Tell your compiler to use Just JSX instead of React:
+Tell your compiler to use Just JSX for JSX transformation:
 
 **TypeScript** (`tsconfig.json`)
 ```json
@@ -279,17 +276,11 @@ const isValidUrl = url.startsWith('https://') || url.startsWith('/');
 3. Serve content over HTTPS only
 4. Use browser's built-in escaping (text content, not innerHTML)
 
-See the [Security section in README](README.md#security-considerations) for more details.
-
 ## Advanced Patterns
 
 See the [examples/recipes](./examples/recipes) directory for:
 
 - **[Memory Management](./examples/recipes/memory-management.tsx)** - Cleaning up event listeners and timers
-- Component composition patterns
-- Form handling and validation
-- Async rendering techniques
-- CSS-in-JS alternatives
 
 ## Limitations
 
@@ -379,7 +370,7 @@ Key performance characteristics:
 - **Element creation**: ~183k ops/sec for simple elements
 - **List rendering**: ~8.4k ops/sec for 10 items, ~922 ops/sec for 100 items
 - **SVG rendering**: ~40k ops/sec for simple SVG elements
-- **Comparison to vanilla**: ~20-30% overhead vs raw `document.createElement`
+- **Comparison to vanilla**: ~7-10% overhead vs raw `document.createElement`
 
 The overhead comes from JSX conveniences (prop processing, event listeners, style objects). For performance-critical sections, you can always drop down to vanilla DOM.
 

@@ -45,13 +45,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tests for namespace correction with manually constructed elements
 
 ### Changed
-- Optimized code size from 374 to 129 lines (65% reduction)
+- Optimized code size from 374 to 196 lines (48% reduction)
   - SVG tags converted to Set with comma-separated string (faster lookups)
   - Condensed property and boolean attribute declarations
   - Simplified conditionals and reduced verbose comments
   - Inlined simple functions
-- Updated README claims from ~200 to ~171 lines
-- Source file now 171 lines with comprehensive type definitions (+42 lines for types)
+- Updated README to emphasize vendorability and ownership over React comparisons
+- Source file now 196 lines with comprehensive type definitions
 - `JSX.Element` type now includes primitive types for full JSX expression support
 - `prepublishOnly` script now includes dist tests
 

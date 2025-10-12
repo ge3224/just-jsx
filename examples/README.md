@@ -1,22 +1,12 @@
 # Examples
 
-This directory contains examples and recipes for using Just JSX.
-
-## Basic Examples
-
-- **counter.tsx** - Simple counter with event handlers
-- **todo-list.tsx** - Todo list with state management
-- **svg-graphics.tsx** - Working with SVG elements
+This directory contains recipes for using Just JSX.
 
 ## Recipes
 
 Advanced patterns and solutions for common use cases:
 
-- **memory-management.tsx** - Event listener cleanup and preventing memory leaks
-- **component-patterns.tsx** - Reusable component patterns
-- **form-handling.tsx** - Form input management and validation
-- **async-rendering.tsx** - Loading states and async data
-- **animations.tsx** - CSS animations and transitions
+- **[memory-management.tsx](./recipes/memory-management.tsx)** - Event listener cleanup and preventing memory leaks
 
 ## Running Examples
 
