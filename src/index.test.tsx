@@ -15,6 +15,12 @@ describe("Test createDomElement", () => {
     expect(document.body.innerHTML).toBe("<p>Hello, world!</p>");
   });
 
+  it("processes an empty JSX element (fast path)", () => {
+    document.body.appendChild(<div />);
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(document.body.innerHTML).toBe("<div></div>");
+  });
+
   it("processes a JSX component with children", () => {
     const Component = () => {
       return (

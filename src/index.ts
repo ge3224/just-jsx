@@ -5,11 +5,6 @@
  * Provides createDomElement and createDomFragment functions for JSX transformation.
  */
 
-// ============================================================================
-// Type Definitions
-// ============================================================================
-
-/** Props that can be passed to any JSX element */
 type DOMAttributes = {
   children?: JSX.Element | JSX.Element[];
   key?: string | number;
@@ -37,30 +32,20 @@ declare global {
   }
 }
 
-/** Functional component type */
 export type FunctionalComponent<P = {}> = (props: P & { children?: JSX.Element | JSX.Element[] }) => JSX.Element;
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const HTML_NS = "http://www.w3.org/1999/xhtml";
-
-// SVG tags (lowercase for case-insensitive matching)
 const SVG_TAGS = new Set("a_svg,animate,animatemotion,animatetransform,audio_svg,canvas_svg,circle,clippath,defs,desc,discard,ellipse,feblend,fecolormatrix,fecomponenttransfer,fecomposite,feconvolvematrix,fediffuselighting,fedisplacementmap,fedistantlight,fedropshadow,feflood,fefunca,fefuncb,fefuncg,fefuncr,fegaussianblur,feimage,femerge,femergenode,femorphology,feoffset,fepointlight,fespecularlighting,fespotlight,fetile,feturbulence,filter,foreignobject,g,iframe_svg,image_svg,line,lineargradient,marker,mask,metadata,mpath,path,pattern,polygon,polyline,radialgradient,rect,script_svg,set,stop,style_svg,svg,switch,symbol,text,textpath,title,tspan,unknown,use,video_svg,view".split(","));
-
 const PROPERTY_NAMES: Record<string, string> = {
   value: "value", checked: "checked", selected: "selected", indeterminate: "indeterminate",
   muted: "muted", volume: "volume", currentTime: "currentTime", playbackRate: "playbackRate",
   innerHTML: "innerHTML", textContent: "textContent", innerText: "innerText",
 };
-
 const BOOLEAN_ATTRS = new Set(["disabled", "readonly", "required", "autofocus", "autoplay", "controls", "loop", "multiple", "open", "hidden", "reversed", "allowfullscreen", "default", "ismap", "novalidate", "formnovalidate", "defer", "async"]);
 
-function isSvgTag(tag: string): boolean {
-  return SVG_TAGS.has(tag.toLowerCase());
-}
+function isSvgTag(tag: string): boolean { return SVG_TAGS.has(tag.toLowerCase()); }
 
-/**
- * Fix namespace mismatches by cloning element with correct namespace
- */
 function fixNamespaceIfNeeded(parent: Element, child: Element): Element {
   const parentNS = parent.namespaceURI;
   const parentTag = parent.tagName;
@@ -80,18 +65,23 @@ function fixNamespaceIfNeeded(parent: Element, child: Element): Element {
 
   if (!expectedNS || childNS === expectedNS) return child;
 
-  // Clone with correct namespace (HTML uses lowercase tags)
   const tagForCreation = expectedNS === HTML_NS ? childTagLower : childTag;
   const corrected = document.createElementNS(expectedNS, tagForCreation);
 
-  Array.from(child.attributes).forEach(attr => corrected.setAttribute(attr.name, attr.value));
-  Array.from(child.childNodes).forEach(grandchild => {
+  const attrs = child.attributes;
+  for (let i = 0; i < attrs.length; i++) {
+    corrected.setAttribute(attrs[i].name, attrs[i].value);
+  }
+
+  const childNodes = child.childNodes;
+  for (let i = 0; i < childNodes.length; i++) {
+    const grandchild = childNodes[i];
     corrected.appendChild(
       grandchild.nodeType === Node.ELEMENT_NODE
         ? fixNamespaceIfNeeded(corrected, grandchild as Element)
         : grandchild.cloneNode(true)
     );
-  });
+  }
 
   return corrected;
 }
@@ -100,7 +90,9 @@ function appendDomChild(parent: Node, child: JSX.Element | JSX.Element[]): void 
   if (child == null || typeof child === "boolean") return;
 
   if (Array.isArray(child)) {
-    child.forEach(c => appendDomChild(parent, c));
+    for (let i = 0; i < child.length; i++) {
+      appendDomChild(parent, child[i]);
+    }
   } else if (typeof child === "string" || typeof child === "number") {
     parent.appendChild(document.createTextNode(String(child)));
   } else if ((child as Node).nodeType === Node.ELEMENT_NODE) {
@@ -111,12 +103,15 @@ function appendDomChild(parent: Node, child: JSX.Element | JSX.Element[]): void 
 }
 
 function styleObjectToString(style: Record<string, string | number>): string {
-  return Object.entries(style).map(([key, value]) => {
+  const parts: string[] = [];
+  for (const key in style) {
     if (/[A-Z]/.test(key)) {
       console.warn(`Style property "${key}" uses camelCase. Use kebab-case instead (e.g., "${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}")`);
     }
-    return `${key}: ${typeof value === "number" ? `${value}px` : value}`;
-  }).join("; ");
+    const value = style[key];
+    parts.push(`${key}: ${typeof value === "number" ? `${value}px` : value}`);
+  }
+  return parts.join("; ");
 }
 
 function setProp(element: Element, name: string, value: any): void {
@@ -144,13 +139,30 @@ export function createDomElement<P = {}>(
     return tag({ ...(props || {} as P), children });
   }
 
+  if (!props && children.length === 1 && typeof children[0] === "string") {
+    const element = document.createElement(tag);
+    element.textContent = children[0];
+    return element;
+  }
+
+  if (!props && children.length === 0) {
+    return document.createElement(tag);
+  }
+
   const ns = isSvgTag(tag) ? SVG_NS : null;
   const element = ns !== null
     ? document.createElementNS(ns, tag.split("_")[0])
     : document.createElement(tag);
 
-  children.forEach(child => appendDomChild(element, child));
-  Object.entries(props || {}).forEach(([name, value]) => setProp(element, name, value));
+  for (let i = 0; i < children.length; i++) {
+    appendDomChild(element, children[i]);
+  }
+
+  if (props) {
+    for (const name in props) {
+      setProp(element, name, props[name]);
+    }
+  }
 
   return element;
 }
@@ -162,6 +174,8 @@ export function createDomFragment(
   const fragment = new DocumentFragment();
   const actualChildren = props?.children || children;
   const childArray = Array.isArray(actualChildren) ? actualChildren : [actualChildren];
-  childArray.forEach(child => appendDomChild(fragment, child));
+  for (let i = 0; i < childArray.length; i++) {
+    appendDomChild(fragment, childArray[i]);
+  }
   return fragment;
 }
