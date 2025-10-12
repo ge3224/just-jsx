@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:dist": "node tests/dist/runtime.test.mjs && tsc --noEmit tests/dist/types.test.ts",
+    "bench": "vitest bench",
     "build": "vite build",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "pnpm test && pnpm build && pnpm test:dist"

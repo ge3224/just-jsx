@@ -38,6 +38,9 @@ pnpm test              # run once
 pnpm test:watch        # watch mode
 pnpm test:coverage     # with coverage
 
+# Benchmarks
+pnpm bench             # performance benchmarks
+
 # Build and type check
 pnpm build
 pnpm type-check
