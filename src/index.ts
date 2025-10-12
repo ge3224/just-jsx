@@ -5,6 +5,7 @@
  * Provides createDomElement and createDomFragment functions for JSX transformation.
  */
 
+/** Common attributes for DOM elements (children, key, ref, etc.) */
 type DOMAttributes = {
   children?: JSX.Element | JSX.Element[];
   key?: string | number;
@@ -32,17 +33,80 @@ declare global {
   }
 }
 
+/** Function that accepts props and returns JSX */
 export type FunctionalComponent<P = {}> = (props: P & { children?: JSX.Element | JSX.Element[] }) => JSX.Element;
+
+/** JSX pragma: creates DOM element or invokes component */
+export function createDomElement<P = {}>(
+  tag: string | FunctionalComponent<P>,
+  props: (P & DOMAttributes) | null,
+  ...children: JSX.Element[]
+): JSX.Element {
+  if (typeof tag === "function") {
+    return tag({ ...(props || {} as P), children });
+  }
+
+  if (!props && children.length === 1 && typeof children[0] === "string") {
+    const element = document.createElement(tag);
+    element.textContent = children[0];
+    return element;
+  }
+
+  if (!props && children.length === 0) {
+    return document.createElement(tag);
+  }
+
+  const ns = isSvgTag(tag) ? SVG_NS : null;
+  const element = ns !== null
+    ? document.createElementNS(ns, tag.split("_")[0])
+    : document.createElement(tag);
+
+  for (let i = 0; i < children.length; i++) {
+    appendDomChild(element, children[i]);
+  }
+
+  if (props) {
+    for (const name in props) {
+      setProp(element, name, props[name]);
+    }
+  }
+
+  return element;
+}
+
+/** JSX fragment pragma: creates DocumentFragment for <>...</> */
+export function createDomFragment(
+  props: { children?: JSX.Element | JSX.Element[] } | null,
+  ...children: JSX.Element[]
+): DocumentFragment {
+  const fragment = new DocumentFragment();
+  const actualChildren = props?.children || children;
+  const childArray = Array.isArray(actualChildren) ? actualChildren : [actualChildren];
+  for (let i = 0; i < childArray.length; i++) {
+    appendDomChild(fragment, childArray[i]);
+  }
+  return fragment;
+}
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const HTML_NS = "http://www.w3.org/1999/xhtml";
-const SVG_TAGS = new Set("a_svg,animate,animatemotion,animatetransform,audio_svg,canvas_svg,circle,clippath,defs,desc,discard,ellipse,feblend,fecolormatrix,fecomponenttransfer,fecomposite,feconvolvematrix,fediffuselighting,fedisplacementmap,fedistantlight,fedropshadow,feflood,fefunca,fefuncb,fefuncg,fefuncr,fegaussianblur,feimage,femerge,femergenode,femorphology,feoffset,fepointlight,fespecularlighting,fespotlight,fetile,feturbulence,filter,foreignobject,g,iframe_svg,image_svg,line,lineargradient,marker,mask,metadata,mpath,path,pattern,polygon,polyline,radialgradient,rect,script_svg,set,stop,style_svg,svg,switch,symbol,text,textpath,title,tspan,unknown,use,video_svg,view".split(","));
+const SVG_TAGS = new Set((`
+  a_svg,animate,animatemotion,animatetransform,audio_svg,canvas_svg,circle,clippath,defs,desc,discard,ellipse,
+  feblend,fecolormatrix,fecomponenttransfer,fecomposite,feconvolvematrix,fediffuselighting,fedisplacementmap,
+  fedistantlight,fedropshadow,feflood,fefunca,fefuncb,fefuncg,fefuncr,fegaussianblur,feimage,femerge,femergenode,
+  femorphology,feoffset,fepointlight,fespecularlighting,fespotlight,fetile,feturbulence,filter,foreignobject,g,
+  iframe_svg,image_svg,line,lineargradient,marker,mask,metadata,mpath,path,pattern,polygon,polyline,radialgradient,
+  rect,script_svg,set,stop,style_svg,svg,switch,symbol,text,textpath,title,tspan,unknown,use,video_svg,view
+`).trim().replace(/\s+/g, "").split(","));
 const PROPERTY_NAMES: Record<string, string> = {
   value: "value", checked: "checked", selected: "selected", indeterminate: "indeterminate",
   muted: "muted", volume: "volume", currentTime: "currentTime", playbackRate: "playbackRate",
   innerHTML: "innerHTML", textContent: "textContent", innerText: "innerText",
 };
-const BOOLEAN_ATTRS = new Set(["disabled", "readonly", "required", "autofocus", "autoplay", "controls", "loop", "multiple", "open", "hidden", "reversed", "allowfullscreen", "default", "ismap", "novalidate", "formnovalidate", "defer", "async"]);
+const BOOLEAN_ATTRS = new Set((`
+  disabled,readonly,required,autofocus,autoplay,controls,loop,multiple,open,hidden,reversed,
+  allowfullscreen,default,ismap,novalidate,formnovalidate,defer,async
+`).trim().replace(/\s+/g, "").split(","));
 
 function isSvgTag(tag: string): boolean { return SVG_TAGS.has(tag.toLowerCase()); }
 
@@ -128,54 +192,4 @@ function setProp(element: Element, name: string, value: any): void {
   } else {
     element.setAttribute(name, value.toString());
   }
-}
-
-export function createDomElement<P = {}>(
-  tag: string | FunctionalComponent<P>,
-  props: (P & DOMAttributes) | null,
-  ...children: JSX.Element[]
-): JSX.Element {
-  if (typeof tag === "function") {
-    return tag({ ...(props || {} as P), children });
-  }
-
-  if (!props && children.length === 1 && typeof children[0] === "string") {
-    const element = document.createElement(tag);
-    element.textContent = children[0];
-    return element;
-  }
-
-  if (!props && children.length === 0) {
-    return document.createElement(tag);
-  }
-
-  const ns = isSvgTag(tag) ? SVG_NS : null;
-  const element = ns !== null
-    ? document.createElementNS(ns, tag.split("_")[0])
-    : document.createElement(tag);
-
-  for (let i = 0; i < children.length; i++) {
-    appendDomChild(element, children[i]);
-  }
-
-  if (props) {
-    for (const name in props) {
-      setProp(element, name, props[name]);
-    }
-  }
-
-  return element;
-}
-
-export function createDomFragment(
-  props: { children?: JSX.Element | JSX.Element[] } | null,
-  ...children: JSX.Element[]
-): DocumentFragment {
-  const fragment = new DocumentFragment();
-  const actualChildren = props?.children || children;
-  const childArray = Array.isArray(actualChildren) ? actualChildren : [actualChildren];
-  for (let i = 0; i < childArray.length; i++) {
-    appendDomChild(fragment, childArray[i]);
-  }
-  return fragment;
 }
