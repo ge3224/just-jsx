@@ -2,59 +2,59 @@
 
 [![No Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://github.com/ge3224/just-jsx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/ge3224/just-jsx)
 
-A vendorable vanilla TypeScript JSX parser with zero dependencies. Just ~171 lines of type-safe DOM rendering, built to be copied into your project—framework-agnostic and audit-friendly.
+**Write JSX without React.** A minimal TypeScript library (~171 lines) that transforms JSX syntax into vanilla DOM operations. Zero dependencies, framework-free, designed to be copied directly into your codebase.
 
-Built for projects where vanilla TypeScript makes sense and stability beats ecosystem churn.
+Perfect for building web UIs when you want JSX's declarative syntax but don't need React's complexity.
 
-## Features
+```tsx
+const App = ({ name }) => (
+  <div>
+    <h1>Hello, {name}!</h1>
+    <button onClick={() => alert('Clicked!')}>
+      Click me
+    </button>
+  </div>
+);
 
-- **Zero dependencies**: No supply chain risk, no transitive dependencies, **no React required**
-- **Framework-agnostic**: Works with any build tool that supports JSX (TypeScript, Vite, SWC, Babel)
-- **DOM rendering**: JSX components and fragments that compile to real DOM elements
-- **SVG support**: First-class support for inline SVG elements
-- **Type-safe**: Full TypeScript support with JSX type definitions, proper type inference, and exported component types
-- **Audit-friendly**: Small enough to actually read and understand (~171 lines including comprehensive types)
+document.body.appendChild(<App name="World" />);
+```
 
-## Installation
+## Why Just JSX?
 
-### Git Submodule
+**JSX is great. React is optional.**
 
+Just JSX gives you:
+- ✅ Familiar JSX syntax for building UIs
+- ✅ Direct DOM manipulation (no virtual DOM overhead)
+- ✅ Full TypeScript support with proper type inference
+- ✅ SVG elements work out of the box
+- ✅ Small enough to audit in 10 minutes (~171 lines)
+- ✅ No build-time or runtime dependencies
+
+Use it when you want the ergonomics of JSX without committing to a framework.
+
+## Quick Start
+
+### 1. Copy the source
+
+**Option A: Git Submodule** (recommended for tracking updates)
 ```bash
-git submodule add https://github.com/ge3224/just-jsx.git
+git submodule add https://github.com/ge3224/just-jsx.git vendor/just-jsx
+cd vendor/just-jsx && git checkout v0.1.6
 ```
 
-```typescript
-import { createDomElement, createDomFragment } from './just-jsx/src/index';
-```
-
-Pin to a version:
+**Option B: Direct Copy** (simplest)
 ```bash
-cd just-jsx && git checkout v0.1.0
+curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/index.ts
 ```
 
-### Direct Copy
+### 2. Configure your build tool
 
-Copy `src/index.ts` into your project.
+Tell your compiler to use Just JSX instead of React:
 
-```typescript
-import { createDomElement, createDomFragment } from './just-jsx';
-```
-
-### npm
-
-Not planned. Vendoring is the point.
-
-## Usage
-
-### Configure Your Build Tool
-
-The JSX pragma functions need to be configured in your build tool to transform JSX syntax.
-
-#### TypeScript (Recommended)
-
-This project is configured to work with the TypeScript compiler. Add to your `tsconfig.json`:
-
+**TypeScript** (`tsconfig.json`)
 ```json
 {
   "compilerOptions": {
@@ -65,296 +65,345 @@ This project is configured to work with the TypeScript compiler. Add to your `ts
 }
 ```
 
-Then compile with:
-```bash
-tsc
-```
-
-#### Vite
-
-If using Vite, add to your `vite.config.ts`:
-
+**Vite** (`vite.config.ts`)
 ```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
+export default {
   esbuild: {
-    jsx: "transform",
     jsxFactory: "createDomElement",
-    jsxFragment: "createDomFragment",
-  },
-});
+    jsxFragment: "createDomFragment"
+  }
+};
 ```
 
-#### SWC
-
-Add to your `.swcrc`:
-
+**SWC** (`.swcrc`)
 ```json
 {
   "jsc": {
-    "parser": {
-      "syntax": "typescript",
-      "tsx": true
-    },
     "transform": {
       "react": {
         "pragma": "createDomElement",
-        "pragmaFrag": "createDomFragment",
-        "runtime": "classic"
+        "pragmaFrag": "createDomFragment"
       }
     }
   }
 }
 ```
 
-### Basic Example
+### 3. Start writing JSX
 
 ```tsx
-import { createDomElement, createDomFragment } from './just-jsx';
+import { createDomElement, createDomFragment } from './vendor/just-jsx/src';
 
-// Simple element
-const greeting = <p>Hello, world!</p>;
+const greeting = <h1>Hello JSX!</h1>;
 document.body.appendChild(greeting);
-
-// Component with props
-const Greeting = ({ name }: { name: string }) => {
-  return <h1>Hello, {name}!</h1>;
-};
-
-document.body.appendChild(<Greeting name="Alice" />);
 ```
 
-### Fragments
+## Examples
+
+### Components with Props
 
 ```tsx
-const List = () => {
-  return (
-    <>
-      <p>Item 1</p>
-      <p>Item 2</p>
-      <p>Item 3</p>
-    </>
-  );
-};
+type GreetingProps = { name: string; emoji?: string };
 
-document.body.appendChild(<List />);
+const Greeting = ({ name, emoji = '👋' }: GreetingProps) => (
+  <div class="greeting">
+    <h2>{emoji} Hi, {name}!</h2>
+  </div>
+);
+
+document.body.appendChild(<Greeting name="Alice" emoji="🎉" />);
+```
+
+### Lists and Conditionals
+
+```tsx
+const TodoList = ({ items, showCompleted }) => (
+  <ul>
+    {items
+      .filter(item => showCompleted || !item.done)
+      .map(item => (
+        <li class={item.done ? 'completed' : ''}>
+          {item.text}
+        </li>
+      ))}
+  </ul>
+);
+
+const todos = [
+  { text: 'Learn JSX', done: true },
+  { text: 'Build something', done: false }
+];
+
+document.body.appendChild(
+  <TodoList items={todos} showCompleted={true} />
+);
 ```
 
 ### Event Handlers
 
 ```tsx
-const Button = () => {
-  const handleClick = () => {
-    console.log('Button clicked!');
-  };
-
-  return <button onClick={handleClick}>Click me</button>;
+const Counter = () => {
+  let count = 0;
+  const button = (
+    <button onClick={() => {
+      count++;
+      button.textContent = `Count: ${count}`;
+    }}>
+      Count: 0
+    </button>
+  );
+  return button;
 };
 
-document.body.appendChild(<Button />);
+document.body.appendChild(<Counter />);
 ```
 
-### SVG Support
+### SVG Graphics
 
 ```tsx
-const Icon = () => {
-  return (
-    <svg width="100" height="100">
-      <circle
-        cx="50"
-        cy="50"
-        r="40"
-        stroke="green"
-        stroke-width="4"
-        fill="yellow"
-      />
-    </svg>
-  );
-};
+const Icon = ({ size = 24, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" fill={color} />
+    <path d="M12 6v6l4 4" stroke="white" stroke-width="2" />
+  </svg>
+);
 
-document.body.appendChild(<Icon />);
+document.body.appendChild(<Icon size={48} color="blue" />);
 ```
 
-### TypeScript Types
+### Fragments
 
-Just JSX includes full TypeScript type definitions for type-safe JSX:
+Use fragments to return multiple elements without a wrapper:
 
 ```tsx
-import { FunctionalComponent } from './just-jsx';
-
-// Type-safe functional component
-const Greeting: FunctionalComponent<{ name: string }> = ({ name, children }) => {
-  return (
-    <div>
-      <h1>Hello, {name}!</h1>
-      {children}
-    </div>
-  );
-};
-
-// Full autocomplete and type checking for HTML/SVG elements
-const element = (
-  <button
-    onClick={(e) => console.log(e.target)}  // e is typed as MouseEvent
-    disabled={false}
-    className="btn"
-  >
-    Click me
-  </button>
+const Header = () => (
+  <>
+    <h1>Title</h1>
+    <p>Subtitle</p>
+  </>
 );
 ```
 
-The library exports:
-- `FunctionalComponent<P>` - Type for functional components with props type P
-- Full JSX namespace with `JSX.Element` and `JSX.IntrinsicElements`
+## TypeScript Support
 
-## API
+Full type safety with autocomplete for all HTML and SVG elements:
 
-### `createDomElement(tag, props, ...children)`
+```tsx
+import type { FunctionalComponent } from './vendor/just-jsx/src';
 
-Pragma function for processing JSX elements.
+// Typed component props
+type ButtonProps = {
+  label: string;
+  variant?: 'primary' | 'secondary';
+  onClick?: () => void;
+};
 
-- **tag**: HTML tag name (string) or functional component
-- **props**: Object containing attributes and event handlers
-- **children**: Child nodes (DOM nodes or strings)
+const Button: FunctionalComponent<ButtonProps> = ({
+  label,
+  variant = 'primary',
+  onClick
+}) => (
+  <button
+    class={`btn btn-${variant}`}
+    onClick={onClick}
+  >
+    {label}
+  </button>
+);
 
-Returns a DOM element or the result of invoking a functional component.
-
-### `createDomFragment(_props, ...children)`
-
-Pragma function for processing JSX fragments (`<></>`).
-
-- **_props**: Unused (fragments don't have props)
-- **children**: Child nodes to include in the DocumentFragment
-
-Returns a DocumentFragment containing the children.
+// Type errors caught at compile time
+<Button label="Click" variant="invalid" />  // ❌ Error
+<Button label="Click" variant="primary" />  // ✅ OK
+```
 
 ## How It Works
 
-Just JSX provides two pragma functions that your build tool uses to transform JSX:
-
-1. **createDomElement**: Converts JSX elements like `<div>Hello</div>` into `document.createElement('div')` calls
-2. **createDomFragment**: Converts JSX fragments like `<></>` into `new DocumentFragment()` calls
-
-The library handles:
-- Creating DOM elements with the correct namespace (HTML vs SVG)
-- Setting attributes and properties
-- Attaching event listeners (any prop starting with "on")
-- Appending children (text nodes, elements, arrays)
-- Invoking functional components
-
-## Security Considerations
-
-This library does not sanitize input. When rendering user-provided content, rely on browser security features and safe coding patterns:
-
-### Browser Security Features
-
-- **[Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)** - Configure HTTP headers to restrict inline scripts and unsafe evaluations
-- **Server-side validation** - Validate and sanitize user input before it reaches the client
-- **HTTPS only** - Ensure all content is served over secure connections
-
-### Safe Coding Patterns
+JSX is syntactic sugar. Build tools transform it into function calls:
 
 ```tsx
-// ✅ Safe - text content is automatically escaped by the browser
+// You write:
+<div class="box">
+  <span>Hello</span>
+</div>
+
+// Build tool transforms to:
+createDomElement('div', { class: 'box' },
+  createDomElement('span', null, 'Hello')
+)
+
+// Just JSX executes:
+const div = document.createElement('div');
+div.setAttribute('class', 'box');
+const span = document.createElement('span');
+span.textContent = 'Hello';
+div.appendChild(span);
+return div;
+```
+
+**Key behaviors:**
+- Props starting with `on` become event listeners: `onClick={fn}` → `addEventListener('click', fn)`
+- `style` prop accepts objects: `style={{ color: 'red' }}` → `style="color: red"`
+- Boolean attributes work correctly: `disabled={false}` removes the attribute
+- SVG elements use the correct XML namespace automatically
+- Form properties like `value` and `checked` are set as properties, not attributes
+
+## Security
+
+Just JSX **does not sanitize input**. Follow these guidelines:
+
+**✅ Safe patterns:**
+```tsx
+// Text content is auto-escaped by the browser
 <div>{userInput}</div>
 
-// ✅ Safe - validate URLs before rendering
-const SafeLink = ({ href, children }) => {
-  const isValidUrl = href.startsWith('https://') || href.startsWith('/');
-  return isValidUrl ? <a href={href}>{children}</a> : <span>{children}</span>;
-};
-
-// ✅ Safe - use textContent for plain text
+// Use textContent for plain text
 <div textContent={userInput} />
 
-// ❌ Unsafe - raw HTML from untrusted sources
+// Validate URLs before rendering
+const isValidUrl = url.startsWith('https://') || url.startsWith('/');
+<a href={isValidUrl ? url : '#'}>{text}</a>
+```
+
+**❌ Unsafe patterns:**
+```tsx
+// Never use innerHTML with untrusted content
 <div innerHTML={userProvidedHtml} />
 
-// ❌ Unsafe - unvalidated URLs
-<a href={userInput}>Link</a>
+// Always validate href attributes
+<a href={userInput}>Link</a>  // Potential javascript: URLs
 ```
 
-### Defense-in-Depth Strategy
+**Defense in depth:**
+1. Set [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) headers
+2. Validate all user input on the server
+3. Serve content over HTTPS only
+4. Use browser's built-in escaping (text content, not innerHTML)
 
-1. **Validate input** on the server before sending to client
-2. **Set CSP headers** to restrict inline scripts and eval()
-3. **Escape by default** - JSX text children are automatically safe
-4. **Validate URLs** for href, src, and action attributes
-5. **Avoid innerHTML** with untrusted content
+See the [Security section in README](README.md#security-considerations) for more details.
 
-The browser's built-in protections combined with proper CSP headers and input validation provide robust defense without library dependencies.
+## Advanced Patterns
 
-## Examples and Recipes
+See the [examples/recipes](./examples/recipes) directory for:
 
-See the [examples directory](./examples) for:
-- Basic usage patterns (counter, todo list, SVG)
-- **Recipes** for advanced patterns:
-  - [Memory management](./examples/recipes/memory-management.tsx) - Event listener cleanup patterns
-  - Component patterns
-  - Form handling
-  - Async rendering
-  - Animations
+- **[Memory Management](./examples/recipes/memory-management.tsx)** - Cleaning up event listeners and timers
+- Component composition patterns
+- Form handling and validation
+- Async rendering techniques
+- CSS-in-JS alternatives
 
-## Development
+## Limitations
 
-```bash
-# Install dependencies
-pnpm install
+Just JSX is intentionally minimal. It does **not** provide:
 
-# Run tests
-pnpm test
+- ❌ State management (use vanilla JS or [Simple State](https://github.com/ge3224/simple-state))
+- ❌ Component lifecycle hooks (use vanilla patterns)
+- ❌ Virtual DOM diffing (direct DOM updates only)
+- ❌ Server-side rendering
+- ❌ Hot module replacement
+- ❌ React compatibility layer
 
-# Run tests in watch mode
-pnpm test:watch
+If you need these features, use React. Just JSX is for projects where simplicity and control matter more than ecosystem features.
 
-# Run tests with coverage
-pnpm test:coverage
+## API Reference
 
-# Test dist output
-pnpm test:dist
+### `createDomElement<P>(tag, props, ...children): JSX.Element`
 
-# Build
-pnpm build
+Creates a DOM element or invokes a functional component.
 
-# Type check
-pnpm type-check
+**Parameters:**
+- `tag`: HTML/SVG tag name (string) or functional component (function)
+- `props`: Object with attributes, properties, and event handlers
+- `children`: Zero or more child elements (elements, strings, numbers, or arrays)
+
+**Returns:** DOM `Element`, `DocumentFragment`, or primitive (string/number/boolean/null/undefined)
+
+**Special props:**
+- `key` and `ref` are filtered out (reserved for future use)
+- Props starting with `on` + function value → event listeners
+- `style` as object → converted to CSS string
+- Boolean attributes (`disabled`, `readonly`, etc.) → removed when `false`
+- Specific props (`value`, `checked`, `selected`, `innerHTML`) → set as properties
+
+### `createDomFragment(props, ...children): DocumentFragment`
+
+Creates a DocumentFragment (for JSX fragments `<></>`).
+
+**Parameters:**
+- `props`: Unused (fragments don't have props, but can have `children` via spread)
+- `children`: Child elements to include in fragment
+
+**Returns:** `DocumentFragment` containing all children
+
+### `FunctionalComponent<P>`
+
+TypeScript type for functional components:
+
+```tsx
+type FunctionalComponent<P = {}> = (
+  props: P & { children?: JSX.Element | JSX.Element[] }
+) => JSX.Element;
 ```
 
-## Versioning
+## Version Management
 
-This project uses [Semantic Versioning](https://semver.org/). All releases are tagged with git tags (e.g., `v0.1.0`, `v0.2.0`).
-
-### Pinning to a Specific Version
-
-When using as a git submodule, you can pin to a specific version:
+Track versions using git tags:
 
 ```bash
-# Add submodule
-git submodule add https://github.com/ge3224/just-jsx.git
+# View available versions
+git tag
 
-# Pin to specific version
-cd just-jsx
-git checkout v0.1.0
-cd ..
-git add just-jsx
-git commit -m "Pin just-jsx to v0.1.0"
-```
-
-### Upgrading Versions
-
-To upgrade to a newer version:
-
-```bash
-cd just-jsx
+# Use specific version (submodule)
+cd vendor/just-jsx
 git fetch --tags
-git checkout v0.2.0  # or whatever version you want
-cd ..
-git add just-jsx
-git commit -m "Upgrade just-jsx to v0.2.0"
+git checkout v0.1.6
+cd ../..
+git add vendor/just-jsx
+git commit -m "Upgrade just-jsx to v0.1.6"
+
+# Use specific version (direct copy)
+curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/index.ts
 ```
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+## Performance
+
+Just JSX is designed for direct DOM manipulation with minimal overhead. Run benchmarks locally:
+
+```bash
+pnpm install
+pnpm bench
+```
+
+Key performance characteristics:
+- **Element creation**: ~183k ops/sec for simple elements
+- **List rendering**: ~8.4k ops/sec for 10 items, ~922 ops/sec for 100 items
+- **SVG rendering**: ~40k ops/sec for simple SVG elements
+- **Comparison to vanilla**: ~20-30% overhead vs raw `document.createElement`
+
+The overhead comes from JSX conveniences (prop processing, event listeners, style objects). For performance-critical sections, you can always drop down to vanilla DOM.
+
+See [benchmark/index.bench.tsx](./benchmark/index.bench.tsx) for detailed benchmarks including:
+- Basic operations (create, props, children, fragments)
+- Scaling tests (lists, nesting, wide children)
+- Real-world scenarios (todo lists, tables, forms, card grids)
+- SVG rendering
+- Comparison with vanilla DOM
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 
 ## License
 
-MIT
+MIT © Jacob Benison
+
+---
+
+**Not on npm by design.** Just JSX is meant to be vendored (copied into your codebase). This gives you:
+- Full control over updates
+- No supply chain vulnerabilities
+- Easy auditing (just read the file)
+- Zero installation friction
+
+Copy the code, read it, modify it, own it.
