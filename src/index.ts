@@ -21,9 +21,9 @@ declare global {
 
     /** Props for intrinsic HTML/SVG elements */
     type IntrinsicElements = {
-      [K in keyof HTMLElementTagNameMap]: Partial<HTMLElementTagNameMap[K]> & DOMAttributes;
+      [K in keyof HTMLElementTagNameMap]: Omit<Partial<HTMLElementTagNameMap[K]>, 'children'> & DOMAttributes;
     } & {
-      [K in keyof SVGElementTagNameMap]: Partial<SVGElementTagNameMap[K]> & DOMAttributes;
+      [K in keyof SVGElementTagNameMap]: Omit<Partial<SVGElementTagNameMap[K]>, 'children'> & DOMAttributes;
     };
 
     /** Props for functional components */
