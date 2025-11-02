@@ -13,6 +13,17 @@ type DOMAttributes = {
   [key: string]: any;
 };
 
+/** SVG-specific attributes that should accept strings */
+type SVGAttributes = {
+  width?: string | number;
+  height?: string | number;
+  viewBox?: string;
+  fill?: string;
+  stroke?: string;
+  xmlns?: string;
+  [key: string]: any;
+};
+
 /** JSX namespace for TypeScript compiler */
 declare global {
   namespace JSX {
@@ -23,7 +34,7 @@ declare global {
     type IntrinsicElements = {
       [K in keyof HTMLElementTagNameMap]: Omit<Partial<HTMLElementTagNameMap[K]>, 'children'> & DOMAttributes;
     } & {
-      [K in keyof SVGElementTagNameMap]: Omit<Partial<SVGElementTagNameMap[K]>, 'children'> & DOMAttributes;
+      [K in keyof SVGElementTagNameMap]: SVGAttributes & DOMAttributes;
     };
 
     /** Props for functional components */
