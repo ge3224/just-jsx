@@ -1,6 +1,6 @@
 {
   "name": "just-jsx",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "JSX syntax for vanilla TypeScript projects. Vendor directly into your codebase—no framework overhead, no supply chain dependencies.",
   "type": "module",
   "main": "./dist/index.js",

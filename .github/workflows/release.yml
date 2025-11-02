@@ -32,14 +32,51 @@ jobs:
       - name: Run type check
         run: pnpm type-check
 
-      - name: Build
+      - name: Build minified versions
         run: pnpm build
 
-      - name: Create tarball
-        run: tar -czf just-jsx-dist.tar.gz dist/
+      - name: Copy minified files
+        run: |
+          mkdir -p release
+          cp dist/just-jsx.iife.min.js release/
+          cp dist/just-jsx.umd.min.js release/
+
+      - name: Build non-minified versions
+        run: BUILD_UNMINIFIED=true pnpm build
+
+      - name: Copy non-minified files
+        run: |
+          cp dist/just-jsx.iife.js release/
+          cp dist/just-jsx.umd.js release/
+
+      - name: Create release artifacts
+        run: |
+          # Create tarball of all dist files
+          tar -czf just-jsx-dist.tar.gz dist/
+
+          # Generate checksums
+          cd release
+          sha256sum just-jsx.iife.min.js > just-jsx.iife.min.js.sha256
+          sha256sum just-jsx.iife.js > just-jsx.iife.js.sha256
+          sha256sum just-jsx.umd.min.js > just-jsx.umd.min.js.sha256
+          sha256sum just-jsx.umd.js > just-jsx.umd.js.sha256
+          cd ..
+
+          # Create checksums for tarball
+          sha256sum just-jsx-dist.tar.gz > just-jsx-dist.tar.gz.sha256
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: just-jsx-dist.tar.gz
+          files: |
+            just-jsx-dist.tar.gz
+            just-jsx-dist.tar.gz.sha256
+            release/just-jsx.iife.min.js
+            release/just-jsx.iife.min.js.sha256
+            release/just-jsx.iife.js
+            release/just-jsx.iife.js.sha256
+            release/just-jsx.umd.min.js
+            release/just-jsx.umd.min.js.sha256
+            release/just-jsx.umd.js
+            release/just-jsx.umd.js.sha256
           generate_release_notes: true

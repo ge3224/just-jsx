@@ -1,11 +1,11 @@
 # Just JSX
 
-[![Version](https://img.shields.io/badge/version-0.1.6-blue.svg)](https://github.com/ge3224/just-jsx)
+[![GitHub Release](https://img.shields.io/github/v/release/ge3224/just-jsx)](https://github.com/ge3224/just-jsx/releases)
 [![No Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://github.com/ge3224/just-jsx)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/ge3224/just-jsx)
+[![License: MIT](https://img.shields.io/github/license/ge3224/just-jsx)](https://github.com/ge3224/just-jsx/blob/main/LICENSE)
+[![CI](https://github.com/ge3224/just-jsx/actions/workflows/ci.yml/badge.svg)](https://github.com/ge3224/just-jsx/actions/workflows/ci.yml)
 
-JSX syntax for vanilla TypeScript projects. A ~195-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
+JSX syntax for vanilla TypeScript projects. A ~206-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
 
 ```tsx
 const App = ({ name }) => (
@@ -27,27 +27,37 @@ Just JSX gives you:
 - ✅ Direct DOM manipulation (no virtual DOM overhead)
 - ✅ Full TypeScript support with proper type inference
 - ✅ SVG elements work out of the box
-- ✅ Small enough to audit in 10 minutes (~195 lines)
+- ✅ Small enough to audit in 10 minutes (~206 lines)
 - ✅ No build-time or runtime dependencies
 
 Vendor it into your project. Read it, understand it, modify it as needed.
 
-## Quick Start
+## Installation
 
-### 1. Copy the source
+**Pre-built bundles** (no build step required):
 
-**Option A: Git Submodule** (recommended for tracking updates)
+Download IIFE or UMD from [releases](https://github.com/ge3224/just-jsx/releases)
+
+```html
+<script src="./just-jsx.iife.min.js"></script>
+<script>
+  const { createDomElement } = window.JustJSX;
+</script>
+```
+
+**TypeScript source:**
+
+Download source from [releases](https://github.com/ge3224/just-jsx/releases) and import directly
+
+**Vendor with git:**
+
 ```bash
 git submodule add https://github.com/ge3224/just-jsx.git vendor/just-jsx
-cd vendor/just-jsx && git checkout v0.1.6
 ```
 
-**Option B: Direct Copy** (simplest)
-```bash
-curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/index.ts
-```
+## Quick Start
 
-### 2. Configure your build tool
+### 1. Configure your build tool
 
 Tell your compiler to use Just JSX for JSX transformation:
 
@@ -86,14 +96,16 @@ export default {
 }
 ```
 
-### 3. Start writing JSX
+### 2. Start writing JSX
 
 ```tsx
-import { createDomElement, createDomFragment } from './vendor/just-jsx/src';
+import { createDomElement, createDomFragment } from './vendor/just-jsx';
 
 const greeting = <h1>Hello JSX!</h1>;
 document.body.appendChild(greeting);
 ```
+
+**Note:** The package exports configuration allows you to import directly from `'./vendor/just-jsx'` instead of `'./vendor/just-jsx/src'` when using un-compiled TypeScript with modern bundlers or TypeScript's `moduleResolution: "bundler"`.
 
 ## Examples
 
@@ -186,7 +198,7 @@ const Header = () => (
 Full type safety with autocomplete for all HTML and SVG elements:
 
 ```tsx
-import type { FunctionalComponent } from './vendor/just-jsx/src';
+import type { FunctionalComponent } from './vendor/just-jsx';
 
 // Typed component props
 type ButtonProps = {
@@ -346,10 +358,10 @@ git tag
 # Use specific version (submodule)
 cd vendor/just-jsx
 git fetch --tags
-git checkout v0.1.6
+git checkout v0.1.8
 cd ../..
 git add vendor/just-jsx
-git commit -m "Upgrade just-jsx to v0.1.6"
+git commit -m "Upgrade just-jsx to v0.1.8"
 
 # Use specific version (direct copy)
 curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/index.ts

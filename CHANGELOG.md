@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2025-11-02
+
+### Fixed
+- SVG attribute handling - improved handling for SVG-specific attributes
+- Null safety in attribute setter - added null check before calling `value.toString()`
+- Build configuration - fixed vite.config.ts for proper module output (UMD/IIFE support)
+
+### Changed
+- **Documentation overhaul:**
+  - Updated README line count from ~195 to ~206 lines (reflects actual source size)
+  - Restructured installation section to prioritize pre-built bundles (matches Switchback pattern)
+  - Changed import paths from `'./vendor/just-jsx/src'` to `'./vendor/just-jsx'` (leverages package.json exports)
+  - Added note explaining package.json exports configuration for un-compiled TypeScript
+  - Updated badges to be dynamic (GitHub Release, License, CI status)
+  - Removed static Test Coverage badge (covered by CI badge)
+- **Release workflow improvements:**
+  - Added multi-format release artifacts (IIFE and UMD, minified and non-minified)
+  - Added SHA256 checksums for all release files
+  - Added complete dist tarball with checksum
+  - Total of 10 release artifacts per version (was 1)
+- Package version bump to v0.1.8
+
+### Added
+- Comprehensive release artifact support in GitHub Actions workflow
+- Dynamic badges for version, license, and CI status
+
+## [0.1.7] - 2025-11-01
+
+### Fixed
+- TypeScript strict mode compatibility - relaxed children type constraints for stricter TypeScript configurations
+
 ## [0.1.6] - 2025-10-12
 
 ### Added
@@ -142,7 +173,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/ge3224/just-jsx/compare/v0.1.7...v0.1.8
+[0.1.7]: https://github.com/ge3224/just-jsx/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/ge3224/just-jsx/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/ge3224/just-jsx/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/ge3224/just-jsx/compare/v0.1.3...v0.1.4

@@ -218,6 +218,16 @@ These features are intentionally **not** planned:
 - [x] Source maps verification
 - [x] Comprehensive test coverage for all edge cases (84 tests, 100% branch coverage)
 
+### ~~v0.1.7~~ ✅ Released
+- [x] TypeScript strict mode compatibility improvements
+
+### ~~v0.1.8~~ ✅ Released
+- [x] SVG attribute handling improvements
+- [x] Null safety in attribute setter
+- [x] Build configuration improvements (UMD/IIFE support)
+- [x] Documentation overhaul (line count accuracy, import paths, dynamic badges)
+- [x] Release workflow enhancements (multi-format artifacts, checksums)
+
 ### Future (v0.2.0+)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed
 - Control flow components (For, Show, Switch/Match) - similar to SolidJS
