@@ -189,7 +189,7 @@ function setProp(element: Element, name: string, value: any): void {
     value === false || value == null ? element.removeAttribute(name) : element.setAttribute(name, "");
   } else if (PROPERTY_NAMES[name]) {
     (element as any)[PROPERTY_NAMES[name]] = value;
-  } else {
+  } else if (value != null) {
     element.setAttribute(name, value.toString());
   }
 }

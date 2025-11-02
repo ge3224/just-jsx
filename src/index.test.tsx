@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { createDomElement, createDomFragment } from "./index";
+import { FunctionalComponent, DOMAttributes, createDomElement, createDomFragment } from "./index";
 
 describe("Test createDomElement", () => {
   let errorWatch: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     document.body.innerHTML = "";
-    errorWatch = vi.spyOn(console, "error").mockImplementation(() => {});
+    errorWatch = vi.spyOn(console, "error").mockImplementation(() => { });
   });
 
   it("processes a JSX component", () => {
@@ -236,21 +236,21 @@ describe("Test createDomElement", () => {
   });
 
   it("handles style object with kebab-case properties", () => {
-    const div = <div style={{color: 'red', 'font-size': '14px'}} /> as HTMLDivElement;
+    const div = <div style={{ color: 'red', 'font-size': '14px' }} /> as HTMLDivElement;
     document.body.appendChild(div);
 
     expect(div.getAttribute("style")).toBe("color: red; font-size: 14px");
   });
 
   it("handles style object with number values", () => {
-    const div = <div style={{width: 100, height: 200}} /> as HTMLDivElement;
+    const div = <div style={{ width: 100, height: 200 }} /> as HTMLDivElement;
     document.body.appendChild(div);
 
     expect(div.getAttribute("style")).toBe("width: 100px; height: 200px");
   });
 
   it("handles style object with mixed values", () => {
-    const div = <div style={{color: 'blue', 'margin-top': 10, padding: '5px'}} /> as HTMLDivElement;
+    const div = <div style={{ color: 'blue', 'margin-top': 10, padding: '5px' }} /> as HTMLDivElement;
     document.body.appendChild(div);
 
     expect(div.getAttribute("style")).toBe("color: blue; margin-top: 10px; padding: 5px");
@@ -264,8 +264,8 @@ describe("Test createDomElement", () => {
   });
 
   it("warns when camelCase is used in style object", () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const div = <div style={{fontSize: '14px'}} /> as HTMLDivElement;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+    const div = <div style={{ fontSize: '14px' }} /> as HTMLDivElement;
     document.body.appendChild(div);
 
     expect(warnSpy).toHaveBeenCalledWith(
@@ -530,13 +530,13 @@ describe("Test createDomElement", () => {
   });
 
   it("handles style with unitless properties that need px", () => {
-    const div = <div style={{width: 100, height: 50, 'z-index': 10}} /> as HTMLDivElement;
+    const div = <div style={{ width: 100, height: 50, 'z-index': 10 }} /> as HTMLDivElement;
     document.body.appendChild(div);
     expect(div.getAttribute("style")).toBe("width: 100px; height: 50px; z-index: 10px");
   });
 
   it("handles style with string values that already have units", () => {
-    const div = <div style={{width: '50%', height: '2em', margin: '10px 20px'}} /> as HTMLDivElement;
+    const div = <div style={{ width: '50%', height: '2em', margin: '10px 20px' }} /> as HTMLDivElement;
     document.body.appendChild(div);
     expect(div.getAttribute("style")).toBe("width: 50%; height: 2em; margin: 10px 20px");
   });
@@ -730,7 +730,7 @@ describe("Test createDomFragment", () => {
 
   beforeEach(() => {
     document.body.innerHTML = "";
-    errorWatch = vi.spyOn(console, "error").mockImplementation(() => {});
+    errorWatch = vi.spyOn(console, "error").mockImplementation(() => { });
   });
 
   it("processes a JSX fragment", () => {
