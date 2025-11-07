@@ -5,7 +5,7 @@
  * Run with: tsc --noEmit test-dist-types.ts
  */
 
-import { createDomElement, createDomFragment, FunctionalComponent } from '../../dist/index.js';
+import { createDomElement, createDomFragment, FunctionalComponent, createRef, Ref } from '../../dist/index.js';
 
 // Test 1: FunctionalComponent type is exported and usable
 const Greeting: FunctionalComponent<{ name: string }> = (props) => {
@@ -41,5 +41,19 @@ const mixed = createDomElement('div', null,
   undefined,
   false
 );
+
+// Test 7: createRef creates a ref object
+const divRef = createRef<HTMLDivElement>();
+const inputRef = createRef<HTMLInputElement>();
+
+// Test 8: Ref type is exported and usable
+const myRef: Ref<HTMLElement> = { current: null };
+const myCallbackRef: Ref<HTMLElement> = (el) => console.log(el);
+
+// Test 9: ref prop works with elements
+const elementWithRef = createDomElement('div', { ref: divRef }, 'Content');
+const elementWithCallbackRef = createDomElement('input', {
+  ref: (el: HTMLInputElement) => console.log(el.value)
+});
 
 console.log('TypeScript type checking passed!');

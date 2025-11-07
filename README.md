@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/github/license/ge3224/just-jsx)](https://github.com/ge3224/just-jsx/blob/main/LICENSE)
 [![CI](https://github.com/ge3224/just-jsx/actions/workflows/ci.yml/badge.svg)](https://github.com/ge3224/just-jsx/actions/workflows/ci.yml)
 
-JSX syntax for vanilla TypeScript projects. A ~206-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
+JSX syntax for vanilla TypeScript projects. A ~218-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
 
 ```tsx
 const App = ({ name }) => (
@@ -27,7 +27,7 @@ Just JSX gives you:
 - ✅ Direct DOM manipulation (no virtual DOM overhead)
 - ✅ Full TypeScript support with proper type inference
 - ✅ SVG elements work out of the box
-- ✅ Small enough to audit in 10 minutes (~206 lines)
+- ✅ Small enough to audit in 10 minutes (~218 lines)
 - ✅ No build-time or runtime dependencies
 
 Vendor it into your project. Read it, understand it, modify it as needed.
@@ -165,6 +165,36 @@ const Counter = () => {
 };
 
 document.body.appendChild(<Counter />);
+```
+
+### DOM Refs
+
+Access DOM elements directly using refs:
+
+```tsx
+import { createRef } from './vendor/just-jsx';
+
+// Object form (like React)
+const input = createRef<HTMLInputElement>();
+const button = (
+  <button onClick={() => input.current?.focus()}>
+    Focus Input
+  </button>
+);
+document.body.appendChild(
+  <>
+    <input ref={input} type="text" />
+    {button}
+  </>
+);
+
+// Callback form (like SolidJS)
+const canvas = (
+  <canvas ref={(el) => {
+    const ctx = el.getContext('2d');
+    ctx.fillRect(0, 0, 100, 100);
+  }} />
+);
 ```
 
 ### SVG Graphics
@@ -321,7 +351,8 @@ Creates a DOM element or invokes a functional component.
 **Returns:** DOM `Element`, `DocumentFragment`, or primitive (string/number/boolean/null/undefined)
 
 **Special props:**
-- `key` and `ref` are filtered out (reserved for future use)
+- `key` is filtered out (reserved for future use)
+- `ref` accepts callback `(el) => void` or object `{current: T | null}` for DOM access
 - Props starting with `on` + function value → event listeners
 - `style` as object → converted to CSS string
 - Boolean attributes (`disabled`, `readonly`, etc.) → removed when `false`
@@ -347,6 +378,24 @@ type FunctionalComponent<P = {}> = (
 ) => JSX.Element;
 ```
 
+### `createRef<T>(): { current: T | null }`
+
+Creates a ref object for accessing DOM elements:
+
+```tsx
+const myDiv = createRef<HTMLDivElement>();
+<div ref={myDiv}>Hello</div>
+// Later: myDiv.current?.classList.add('active')
+```
+
+### `Ref<T>`
+
+TypeScript type for refs (callback or object):
+
+```tsx
+type Ref<T = Element> = ((el: T) => void) | { current: T | null };
+```
+
 ## Version Management
 
 Track versions using git tags:
@@ -358,10 +407,10 @@ git tag
 # Use specific version (submodule)
 cd vendor/just-jsx
 git fetch --tags
-git checkout v0.1.8
+git checkout v0.1.9
 cd ../..
 git add vendor/just-jsx
-git commit -m "Upgrade just-jsx to v0.1.8"
+git commit -m "Upgrade just-jsx to v0.1.9"
 
 # Use specific version (direct copy)
 curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/index.ts

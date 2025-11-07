@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2025-11-07
+
+### Added
+- Ref support for accessing DOM elements
+  - Exported `Ref<T>` type for type-safe refs (callback or object form)
+  - Added `createRef<T>()` helper function
+  - Support callback refs: `ref={(el) => ...}`
+  - Support object refs: `ref={myRef}` where `myRef.current` gets the element
+  - Refs are assigned after element creation but before return
+  - Implementation adds only 12 lines, keeping total at 218 lines
+- 7 new comprehensive tests for ref functionality (99 tests total)
+- Documentation for refs in README with examples and API reference
+
+### Changed
+- Source code line count from 206 to 218 lines
+- Updated 1 existing test to verify ref behavior instead of filtering
+
 ## [0.1.8] - 2025-11-02
 
 ### Fixed
@@ -173,7 +190,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/ge3224/just-jsx/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/ge3224/just-jsx/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/ge3224/just-jsx/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/ge3224/just-jsx/compare/v0.1.5...v0.1.6

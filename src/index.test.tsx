@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { FunctionalComponent, DOMAttributes, createDomElement, createDomFragment } from "./index";
+import { FunctionalComponent, DOMAttributes, createDomElement, createDomFragment, createRef } from "./index";
 
 describe("Test createDomElement", () => {
   let errorWatch: ReturnType<typeof vi.spyOn>;
@@ -335,9 +335,17 @@ describe("Test createDomElement", () => {
     expect(document.body.innerHTML).toBe("<div>Hello</div>");
   });
 
-  it("filters out ref prop", () => {
-    document.body.appendChild(<div ref="myRef">World</div>);
+  it("does not add ref as an attribute", () => {
+    const myRef = createRef<HTMLDivElement>();
+    const element = <div ref={myRef}>World</div> as HTMLDivElement;
+    document.body.appendChild(element);
+
+    // ref should not appear as an attribute in the HTML
     expect(document.body.innerHTML).toBe("<div>World</div>");
+    expect(element.hasAttribute("ref")).toBe(false);
+
+    // but ref.current should be set
+    expect(myRef.current).toBe(element);
   });
 
   it("handles SVG namespace correctly", () => {
@@ -954,5 +962,111 @@ describe("Test createDomFragment", () => {
     expect(correctedCircle.tagName.toLowerCase()).toBe("circle");
     expect(correctedCircle.namespaceURI).toBe("http://www.w3.org/2000/svg");
     expect(correctedCircle.getAttribute("cx")).toBe("50");
+  });
+});
+
+describe("Test ref support", () => {
+  let errorWatch: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    errorWatch = vi.spyOn(console, "error").mockImplementation(() => { });
+  });
+
+  it("handles ref with object form (createRef)", () => {
+    const divRef = createRef<HTMLDivElement>();
+
+    expect(divRef.current).toBeNull();
+
+    const element = <div ref={divRef}>Hello</div> as HTMLDivElement;
+
+    expect(divRef.current).toBe(element);
+    expect(divRef.current?.textContent).toBe("Hello");
+  });
+
+  it("handles ref with callback form", () => {
+    const capturedElements: HTMLElement[] = [];
+
+    const element = (
+      <div ref={(el) => capturedElements.push(el)}>
+        Hello
+      </div>
+    ) as HTMLDivElement;
+
+    expect(capturedElements.length).toBe(1);
+    expect(capturedElements[0]).toBe(element);
+    expect(capturedElements[0].textContent).toBe("Hello");
+  });
+
+  it("handles ref on different element types", () => {
+    const inputRef = createRef<HTMLInputElement>();
+    const buttonRef = createRef<HTMLButtonElement>();
+
+    const input = <input ref={inputRef} type="text" value="test" /> as HTMLInputElement;
+    const button = <button ref={buttonRef}>Click</button> as HTMLButtonElement;
+
+    expect(inputRef.current).toBe(input);
+    expect(buttonRef.current).toBe(button);
+    expect(inputRef.current?.value).toBe("test");
+    expect(buttonRef.current?.textContent).toBe("Click");
+  });
+
+  it("handles ref on SVG elements", () => {
+    const svgRef = createRef<SVGSVGElement>();
+    const circleRef = createRef<SVGCircleElement>();
+
+    const circle = <circle ref={circleRef} cx="50" cy="50" r="40" /> as SVGCircleElement;
+    const svg = (
+      <svg ref={svgRef} width="100" height="100">
+        {circle}
+      </svg>
+    ) as SVGSVGElement;
+
+    expect(svgRef.current).toBe(svg);
+    expect(circleRef.current).toBe(circle);
+    expect(circleRef.current?.getAttribute("cx")).toBe("50");
+  });
+
+  it("handles ref with functional components (ref passed to child)", () => {
+    const divRef = createRef<HTMLDivElement>();
+
+    const Component = ({ innerRef }) => <div ref={innerRef}>Component content</div>;
+
+    const element = <Component innerRef={divRef} /> as HTMLDivElement;
+
+    expect(divRef.current).toBe(element);
+    expect(divRef.current?.textContent).toBe("Component content");
+  });
+
+  it("handles ref callback that performs operations on element", () => {
+    let wasCalled = false;
+    let receivedElement: HTMLDivElement | null = null;
+
+    const element = (
+      <div
+        ref={(el) => {
+          wasCalled = true;
+          receivedElement = el;
+          el.classList.add("test-class");
+          el.setAttribute("data-test", "value");
+        }}
+      >
+        Hello
+      </div>
+    ) as HTMLDivElement;
+
+    expect(wasCalled).toBe(true);
+    expect(receivedElement).toBe(element);
+    expect(element.classList.contains("test-class")).toBe(true);
+    expect(element.getAttribute("data-test")).toBe("value");
+  });
+
+  it("does not error when ref is null or undefined", () => {
+    const element1 = <div ref={null}>Hello</div> as HTMLDivElement;
+    const element2 = <div ref={undefined}>World</div> as HTMLDivElement;
+
+    expect(errorWatch).not.toHaveBeenCalled();
+    expect(element1.textContent).toBe("Hello");
+    expect(element2.textContent).toBe("World");
   });
 });

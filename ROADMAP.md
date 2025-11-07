@@ -162,9 +162,25 @@ Complex SVG/HTML nesting scenarios now work correctly, including:
 
 **Location:** `examples/recipes/memory-management.tsx`
 
-#### 12. Advanced Props
-**Not supported:**
-- `ref` - Direct DOM reference handling
+#### ~~12. Ref Support~~ ✓ Fixed in v0.1.9
+**Status:** ✅ Resolved
+
+Refs for direct DOM element access are now supported in both callback and object forms (React/SolidJS-style).
+
+**Location:** `src/index.ts` (`createRef`, `Ref<T>` type, ref handling in `createDomElement`)
+
+```tsx
+// Object form (like React)
+const myDiv = createRef<HTMLDivElement>();
+<div ref={myDiv}>Hello</div>
+// Later: myDiv.current?.classList.add('active')
+
+// Callback form (like SolidJS)
+<div ref={(el) => console.log('mounted:', el)}>Hello</div>
+```
+
+#### 13. Advanced Props
+**Not yet supported:**
 - `dangerouslySetInnerHTML` - Raw HTML injection
 - Synthetic events - Event normalization
 
@@ -227,6 +243,14 @@ These features are intentionally **not** planned:
 - [x] Build configuration improvements (UMD/IIFE support)
 - [x] Documentation overhaul (line count accuracy, import paths, dynamic badges)
 - [x] Release workflow enhancements (multi-format artifacts, checksums)
+
+### ~~v0.1.9~~ ✅ Released
+- [x] Ref support for DOM element access (#12)
+  - [x] Exported `Ref<T>` type (callback or object form)
+  - [x] `createRef<T>()` helper function
+  - [x] Support both callback and object refs
+- [x] 7 new comprehensive tests for refs (99 tests total)
+- [x] Documentation and API reference for refs
 
 ### Future (v0.2.0+)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed
