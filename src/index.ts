@@ -5,11 +5,19 @@
  * Provides createDomElement and createDomFragment functions for JSX transformation.
  */
 
+/** Ref can be a callback or an object with a current property */
+export type Ref<T = Element> = ((el: T) => void) | { current: T | null };
+
+/** Creates a ref object that can be passed to JSX elements */
+export function createRef<T = Element>(): { current: T | null } {
+  return { current: null };
+}
+
 /** Common attributes for DOM elements (children, key, ref, etc.) */
 type DOMAttributes = {
   children?: JSX.Element | JSX.Element[];
   key?: string | number;
-  ref?: any;
+  ref?: Ref<any>;
   [key: string]: any;
 };
 
@@ -77,8 +85,12 @@ export function createDomElement<P = {}>(
   }
 
   if (props) {
+    const ref = props.ref;
     for (const name in props) {
       setProp(element, name, props[name]);
+    }
+    if (ref) {
+      typeof ref === "function" ? ref(element) : ref.current = element;
     }
   }
 
