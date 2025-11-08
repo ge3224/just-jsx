@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/github/license/ge3224/just-jsx)](https://github.com/ge3224/just-jsx/blob/main/LICENSE)
 [![CI](https://github.com/ge3224/just-jsx/actions/workflows/ci.yml/badge.svg)](https://github.com/ge3224/just-jsx/actions/workflows/ci.yml)
 
-JSX syntax for vanilla TypeScript projects. A ~218-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
+JSX syntax for vanilla TypeScript projects. A ~222-line library you vendor directly into your codebase—no framework overhead, no supply chain dependencies, small enough to audit in 10 minutes.
 
 ```tsx
 const App = ({ name }) => (
@@ -27,7 +27,7 @@ Just JSX gives you:
 - ✅ Direct DOM manipulation (no virtual DOM overhead)
 - ✅ Full TypeScript support with proper type inference
 - ✅ SVG elements work out of the box
-- ✅ Small enough to audit in 10 minutes (~218 lines)
+- ✅ Small enough to audit in 10 minutes (~222 lines)
 - ✅ No build-time or runtime dependencies
 
 Vendor it into your project. Read it, understand it, modify it as needed.
@@ -407,10 +407,10 @@ git tag
 # Use specific version (submodule)
 cd vendor/just-jsx
 git fetch --tags
-git checkout v0.1.9
+git checkout v0.1.10
 cd ../..
 git add vendor/just-jsx
-git commit -m "Upgrade just-jsx to v0.1.9"
+git commit -m "Upgrade just-jsx to v0.1.10"
 
 # Use specific version (direct copy)
 curl -o src/jsx.ts https://raw.githubusercontent.com/ge3224/just-jsx/v0.1.6/src/index.ts

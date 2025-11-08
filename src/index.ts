@@ -13,11 +13,15 @@ export function createRef<T = Element>(): { current: T | null } {
   return { current: null };
 }
 
+/** Style attribute can be a string or an object with CSS properties (kebab-case or camelCase) */
+type StyleAttribute = string | { [key: string]: string | number };
+
 /** Common attributes for DOM elements (children, key, ref, etc.) */
 type DOMAttributes = {
   children?: JSX.Element | JSX.Element[];
   key?: string | number;
   ref?: Ref<any>;
+  style?: StyleAttribute;
   [key: string]: any;
 };
 
@@ -40,7 +44,7 @@ declare global {
 
     /** Props for intrinsic HTML/SVG elements */
     type IntrinsicElements = {
-      [K in keyof HTMLElementTagNameMap]: Omit<Partial<HTMLElementTagNameMap[K]>, 'children'> & DOMAttributes;
+      [K in keyof HTMLElementTagNameMap]: Omit<Partial<HTMLElementTagNameMap[K]>, 'children' | 'style'> & DOMAttributes;
     } & {
       [K in keyof SVGElementTagNameMap]: SVGAttributes & DOMAttributes;
     };

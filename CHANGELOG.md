@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.10] - 2025-11-08
+
+### Added
+- TypeScript support for style objects with flexible property naming
+  - New `StyleAttribute` type: `string | { [key: string]: string | number }`
+  - Allows both kebab-case (`"z-index"`) and camelCase (`zIndex`) in style objects
+  - Fixed TypeScript errors when using object styles with any CSS property name
+
+### Changed
+- Improved `DOMAttributes` type to explicitly include `style?: StyleAttribute`
+- Updated `IntrinsicElements` to exclude native `style` property from HTMLElement types
+- Source code line count from 218 to 222 lines
+
 ## [0.1.9] - 2025-11-07
 
 ### Added
@@ -190,7 +203,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/ge3224/just-jsx/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/ge3224/just-jsx/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/ge3224/just-jsx/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/ge3224/just-jsx/compare/v0.1.6...v0.1.7

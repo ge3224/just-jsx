@@ -252,6 +252,13 @@ These features are intentionally **not** planned:
 - [x] 7 new comprehensive tests for refs (99 tests total)
 - [x] Documentation and API reference for refs
 
+### ~~v0.1.10~~ ✅ Released
+- [x] Improved TypeScript support for style objects
+  - [x] New `StyleAttribute` type for flexible style property naming
+  - [x] Support for both kebab-case and camelCase CSS properties
+  - [x] Fixed type errors when using object styles with any property name
+- [x] Source line count: 218 → 222 lines
+
 ### Future (v0.2.0+)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed
 - Control flow components (For, Show, Switch/Match) - similar to SolidJS
