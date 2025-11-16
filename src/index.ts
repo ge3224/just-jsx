@@ -20,9 +20,10 @@ type StyleAttribute = string | { [key: string]: string | number };
 type DOMAttributes = {
   children?: JSX.Element | JSX.Element[];
   key?: string | number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ref?: Ref<any>;
   style?: StyleAttribute;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 /** SVG-specific attributes that should accept strings */
@@ -33,14 +34,14 @@ type SVGAttributes = {
   fill?: string;
   stroke?: string;
   xmlns?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 /** JSX namespace for TypeScript compiler */
 declare global {
   namespace JSX {
     /** Result of JSX expression */
-    type Element = Node | DocumentFragment | string | number | boolean | null | undefined;
+    type Element = Node | DocumentFragment | string | number | boolean | null | undefined | Array<Element> | ReadonlyArray<Element>;
 
     /** Props for intrinsic HTML/SVG elements */
     type IntrinsicElements = {
@@ -49,7 +50,7 @@ declare global {
       [K in keyof SVGElementTagNameMap]: SVGAttributes & DOMAttributes;
     };
 
-    /** Props for functional components */
+    /** Props for functional components - tells TS which prop holds children */
     interface ElementChildrenAttribute {
       children: {};
     }
@@ -63,7 +64,7 @@ export type FunctionalComponent<P = {}> = (props: P & { children?: JSX.Element |
 export function createDomElement<P = {}>(
   tag: string | FunctionalComponent<P>,
   props: (P & DOMAttributes) | null,
-  ...children: JSX.Element[]
+  ...children: (JSX.Element | JSX.Element[])[]
 ): JSX.Element {
   if (typeof tag === "function") {
     return tag({ ...(props || {} as P), children });
@@ -104,7 +105,7 @@ export function createDomElement<P = {}>(
 /** JSX fragment pragma: creates DocumentFragment for <>...</> */
 export function createDomFragment(
   props: { children?: JSX.Element | JSX.Element[] } | null,
-  ...children: JSX.Element[]
+  ...children: (JSX.Element | JSX.Element[])[]
 ): DocumentFragment {
   const fragment = new DocumentFragment();
   const actualChildren = props?.children || children;
@@ -205,18 +206,18 @@ function styleObjectToString(style: Record<string, string | number>): string {
   return parts.join("; ");
 }
 
-function setProp(element: Element, name: string, value: any): void {
+function setProp(element: Element, name: string, value: unknown): void {
   if (name === "key" || name === "ref") return;
 
   if (name.startsWith("on") && typeof value === "function") {
-    element.addEventListener(name.toLowerCase().slice(2), value);
+    element.addEventListener(name.toLowerCase().slice(2), value as EventListener);
   } else if (name === "style" && typeof value === "object" && value !== null) {
-    element.setAttribute("style", styleObjectToString(value));
+    element.setAttribute("style", styleObjectToString(value as Record<string, string | number>));
   } else if (BOOLEAN_ATTRS.has(name)) {
     value === false || value == null ? element.removeAttribute(name) : element.setAttribute(name, "");
   } else if (PROPERTY_NAMES[name]) {
-    (element as any)[PROPERTY_NAMES[name]] = value;
+    (element as unknown as Record<string, unknown>)[PROPERTY_NAMES[name]] = value;
   } else if (value != null) {
-    element.setAttribute(name, value.toString());
+    element.setAttribute(name, String(value));
   }
 }

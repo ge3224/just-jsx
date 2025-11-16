@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11] - 2025-11-15
+
+### Changed
+- Improved type safety throughout codebase
+  - Changed `any` types to `unknown` for better type safety
+  - Added explicit type annotations and type guards
+  - Updated `JSX.Element` to support arrays and readonly arrays (enables `.map()` in JSX)
+  - Changed `DOMAttributes` index signature from `any` to `unknown`
+  - Changed `SVGAttributes` index signature from `any` to `unknown`
+  - Added proper type casting with explicit conversions
+  - Added eslint-disable comment for ref's generic `any` type (intentionally permissive)
+- TypeScript configuration updated
+  - Added `"types": ["node"]` to tsconfig.json for better Node.js type support
+- Source code line count from 222 to 223 lines
+
 ## [0.1.10] - 2025-11-08
 
 ### Added
@@ -203,7 +218,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Functional components receive children as second argument instead of `props.children`
 - No TypeScript JSX type definitions (JSX.IntrinsicElements, etc.)
 
-[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/ge3224/just-jsx/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/ge3224/just-jsx/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/ge3224/just-jsx/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/ge3224/just-jsx/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/ge3224/just-jsx/compare/v0.1.7...v0.1.8

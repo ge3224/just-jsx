@@ -259,6 +259,16 @@ These features are intentionally **not** planned:
   - [x] Fixed type errors when using object styles with any property name
 - [x] Source line count: 218 → 222 lines
 
+### ~~v0.1.11~~ ✅ Released
+- [x] Improved type safety throughout codebase
+  - [x] Replaced `any` types with `unknown` for better type safety
+  - [x] Added explicit type annotations and type guards
+  - [x] Updated `JSX.Element` to support arrays (enables `.map()` in JSX)
+  - [x] Added proper type casting with explicit conversions
+- [x] TypeScript configuration improvements
+  - [x] Added `"types": ["node"]` for better Node.js type support
+- [x] Source line count: 222 → 223 lines
+
 ### Future (v0.2.0+)
 - Advanced prop handling (dangerouslySetInnerHTML) - if needed
 - Control flow components (For, Show, Switch/Match) - similar to SolidJS
